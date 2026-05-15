@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Vocab Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;family=Inter:wght@400;500;600&amp;display=swap');
+        
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .jp-font { font-family: 'Noto Sans JP', sans-serif; }
+        
+        .vocab-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .vocab-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+        }
+
+        #quiz-japanese {
+            transition: all 0.3s;
+        }
+        #quiz-japanese.clickable {
+            cursor: pointer;
+        }
+        #quiz-japanese.clickable:hover {
+            color: #ef4444;
+        }
+
+        @media (max-width: 640px) {
+            #quiz-japanese { font-size: 2.5rem; }
+            .input-field { font-size: 1.1rem; padding: 1rem 1.25rem; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto p-4 sm:p-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8 sm:mb-10">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-2xl flex items-center justify-center text-white text-3xl font-bold">日</div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">Japanese Vocab</h1>
+                    <p class="text-gray-500 text-sm sm:text-base">Learn with flashcards & quiz</p>
+                </div>
+            </div>
+            
+            <button onclick="toggleView()" id="view-toggle"
+                    class="px-5 py-3 bg-white border-2 border-gray-300 hover:border-red-400 rounded-3xl flex items-center gap-2 sm:gap-3 font-semibold text-base sm:text-lg transition-all">
+                <i class="fas fa-gamepad"></i>
+                <span id="toggle-text" class="hidden sm:inline">Start Quiz Mode</span>
+                <span class="sm:hidden">Quiz</span>
+            </button>
+        </div>
+
+        <!-- LIST VIEW -->
+        <div id="list-view">
+            <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-sm mb-8">
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="font-medium text-gray-600">Filter Lessons:</span>
+                    <button onclick="toggleAllLessons(true)" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-2xl text-sm font-medium">All</button>
+                    <button onclick="toggleAllLessons(false)" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-2xl text-sm font-medium">None</button>
+                    <div class="flex flex-wrap gap-2 ml-4" id="lesson-filters"></div>
+                </div>
+            </div>
+
+            <div id="vocab-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
+        </div>
+
+        <!-- QUIZ VIEW -->
+        <div id="quiz-view" class="hidden">
+            <div class="max-w-2xl mx-auto flex flex-col min-h-[calc(100vh-100px)]">
+                <!-- Progress -->
+                <div class="bg-white rounded-3xl p-4 sm:p-5 mb-6 flex justify-between items-center">
+                    <div class="flex-1">
+                        <div class="text-sm text-gray-500 mb-1">Progress</div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+                                <div id="progress-bar" class="h-full bg-red-500 transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <span id="progress-text" class="font-mono font-semibold text-sm">1 / 10</span>
+                        </div>
+                    </div>
+                    <button onclick="endQuiz()" class="ml-4 text-red-600 hover:bg-red-50 px-4 py-2 rounded-2xl flex items-center gap-2">
+                        <i class="fas fa-times"></i> <span class="hidden sm:inline">End</span>
+                    </button>
+                </div>
+
+                <!-- Main Quiz Card -->
+                <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 flex-1 flex flex-col">
+                    <div class="text-center mb-8">
+                        <div id="current-lesson" class="inline-block px-5 py-2 bg-amber-100 text-amber-700 rounded-3xl text-sm font-medium"></div>
+                        <div class="mt-8">
+                            <div class="text-gray-400 text-sm mb-2 tracking-widest">JAPANESE</div>
+                            <div id="quiz-japanese" class="jp-font text-5xl sm:text-6xl font-medium text-gray-800"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6 flex-1">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-3">Pronunciation (Romaji)</label>
+                            <input id="input-romaji" type="text" placeholder="watashi" 
+                                   class="input-field w-full px-6 py-5 text-xl sm:text-2xl border-2 border-gray-200 focus:border-red-400 rounded-3xl outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-3">Meaning (English or বাংলা)</label>
+                            <input id="input-meaning" type="text" placeholder="I / আমি" 
+                                   class="input-field w-full px-6 py-5 text-xl sm:text-2xl border-2 border-gray-200 focus:border-red-400 rounded-3xl outline-none">
+                        </div>
+                    </div>
+
+                    <div id="feedback" class="hidden mt-6 p-6 rounded-2xl text-center text-lg font-medium"></div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                        <button onclick="submitAnswer()" id="check-btn"
+                                class="flex-1 py-5 sm:py-6 bg-red-500 hover:bg-red-600 text-white rounded-3xl font-semibold text-lg transition-all">
+                            Check Answer
+                        </button>
+                        <button onclick="skipWord()" id="skip-btn"
+                                class="hidden flex-1 py-5 sm:py-6 bg-gray-700 hover:bg-gray-800 text-white rounded-3xl font-semibold text-lg">
+                            Skip
+                        </button>
+                        <button onclick="revealAnswer()" id="reveal-btn"
+                                class="hidden flex-1 py-5 sm:py-6 bg-amber-600 hover:bg-amber-700 text-white rounded-3xl font-semibold text-lg">
+                            Reveal Answer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="bg-white rounded-3xl p-5 sm:p-6 mt-6 grid grid-cols-3 gap-4 shadow-sm">
+                    <div class="text-center">
+                        <div id="correct-count" class="text-3xl sm:text-4xl font-bold text-green-500">0</div>
+                        <div class="text-xs text-gray-500 font-medium">CORRECT</div>
+                    </div>
+                    <div class="text-center">
+                        <div id="incorrect-count" class="text-3xl sm:text-4xl font-bold text-red-500">0</div>
+                        <div class="text-xs text-gray-500 font-medium">INCORRECT</div>
+                    </div>
+                    <div class="text-center">
+                        <div id="accuracy" class="text-3xl sm:text-4xl font-bold text-blue-500">100%</div>
+                        <div class="text-xs text-gray-500 font-medium">ACCURACY</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lesson Selection Modal -->
+    <div id="lesson-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl w-full max-w-lg">
+            <div class="p-6 sm:p-8">
+                <h2 class="text-3xl font-bold mb-2">Start New Quiz</h2>
+                <p class="text-gray-500">Select lessons to practice</p>
+                <div id="modal-lesson-list" class="my-8 space-y-3 max-h-[420px] overflow-auto"></div>
+                <div class="flex gap-4">
+                    <button onclick="cancelModal()" class="flex-1 py-4 border border-gray-300 rounded-3xl hover:bg-gray-100 font-medium">Cancel</button>
+                    <button onclick="startQuiz()" class="flex-1 py-4 bg-red-500 text-white rounded-3xl font-semibold">Start Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completion Modal -->
+    <div id="completion-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md">
+            <div class="p-8 sm:p-10 text-center">
+                <div class="text-7xl mb-6">🎉</div>
+                <h2 class="text-3xl font-bold mb-2">Quiz Completed!</h2>
+                <p class="text-gray-500 mb-8">Excellent effort!</p>
+
+                <div class="grid grid-cols-3 gap-4 mb-10">
+                    <div class="bg-green-50 rounded-2xl p-5">
+                        <div id="final-correct" class="text-4xl font-bold text-green-600">0</div>
+                        <div class="text-sm text-green-600">Correct</div>
+                    </div>
+                    <div class="bg-red-50 rounded-2xl p-5">
+                        <div id="final-incorrect" class="text-4xl font-bold text-red-600">0</div>
+                        <div class="text-sm text-red-600">Incorrect</div>
+                    </div>
+                    <div class="bg-blue-50 rounded-2xl p-5">
+                        <div id="final-accuracy" class="text-4xl font-bold text-blue-600">100%</div>
+                        <div class="text-sm text-blue-600">Accuracy</div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="retryQuiz()" class="w-full py-4 bg-red-500 hover:bg-red-600 text-white rounded-3xl font-semibold text-lg">Retry Same Lessons</button>
+                    <button onclick="chooseNewLessons()" class="w-full py-4 bg-gray-800 hover:bg-black text-white rounded-3xl font-semibold text-lg">Choose Different Lessons</button>
+                    <button onclick="closeCompletionModal()" class="w-full py-4 border border-gray-300 hover:bg-gray-100 rounded-3xl font-medium text-lg">Back to Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== YOUR VOCAB DATA GOES HERE ====================
+        let vocabData = [
+             { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "わたし", "romaji": "Watashi", "meaningBangla": "আমি", "meaningEnglish": "I" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "わたしたち", "romaji": "Watashitachi", "meaningBangla": "আমরা", "meaningEnglish": "We" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "あんた", "romaji": "Anta", "meaningBangla": "আপনি/তুমি", "meaningEnglish": "You (informal)" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "あのひと", "romaji": "Ano hito", "meaningBangla": "ঐ ব্যক্তি", "meaningEnglish": "That person" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "あのかた", "romaji": "Ano kata", "meaningBangla": "ঐ ব্যক্তি (সন্মানসূচক)", "meaningEnglish": "That person (polite)" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "みなさん", "romaji": "Minasan", "meaningBangla": "আপনারা সকলে/সুধিবৃন্দ", "meaningEnglish": "Everyone" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "~さん", "romaji": "~San", "meaningBangla": "জনাব/বেগম", "meaningEnglish": "Mr. / Ms. / Mrs." },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "~ちゃん", "romaji": "~Chan", "meaningBangla": "ছোট শিশুর (নামের সাথে ব্যবহার করা হয়)", "meaningEnglish": "Suffix for children (suffix for names)" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "~くん", "romaji": "~Kun", "meaningBangla": "বালকের নামের সাথে ব্যবহার করা হয়", "meaningEnglish": "Suffix for boys (suffix for names)" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "~じん", "romaji": "~Jin", "meaningBangla": "নাগরিকত্ব বোঝানোর জন্য ব্যবহার করা হয়", "meaningEnglish": "Suffix for nationality" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "せんせい", "romaji": "Sensei", "meaningBangla": "শিক্ষক/প্রশিক্ষক", "meaningEnglish": "Teacher (not used for one's own profession)" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "きょうし", "romaji": "Kyoushi", "meaningBangla": "শিক্ষক/প্রশিক্ষক", "meaningEnglish": "Teacher (used for one's own profession)" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "がくせい", "romaji": "Gakusei", "meaningBangla": "ছাত্র/ছাত্রী", "meaningEnglish": "Student" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "かいしゃいん", "romaji": "Kaishain", "meaningBangla": "কোম্পানিতে চাকুরীরত ব্যক্তি", "meaningEnglish": "Company employee" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "しゃいん", "romaji": "Shain", "meaningBangla": "ব্যক্তি (কোন কোম্পানির চাকুরীরত)", "meaningEnglish": "Employee of a specific company" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "ぎんこういん", "romaji": "Ginkouin", "meaningBangla": "কোন ব্যাংকে চাকুরীরত ব্যক্তি", "meaningEnglish": "Bank employee" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "いしゃ", "romaji": "Isha", "meaningBangla": "ডাক্তার", "meaningEnglish": "Doctor" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "けんきゅうしゃ", "romaji": "Kenkyuusha", "meaningBangla": "গবেষক", "meaningEnglish": "Researcher" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "エンジニア", "romaji": "Enjinia", "meaningBangla": "প্রকৌশলী", "meaningEnglish": "Engineer" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "だいがく", "romaji": "Daigaku", "meaningBangla": "বিশ্ববিদ্যালয়", "meaningEnglish": "University" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "びょういん", "romaji": "Byouin", "meaningBangla": "হাসপাতাল", "meaningEnglish": "Hospital" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "でんき", "romaji": "Denki", "meaningBangla": "বিদ্যুৎ", "meaningEnglish": "Electricity" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "だれ", "romaji": "Dare", "meaningBangla": "কে", "meaningEnglish": "Who" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "どなた", "romaji": "Donata", "meaningBangla": "কে (সন্মানসূচক)", "meaningEnglish": "Who (polite)" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "~さい", "romaji": "~Sai", "meaningBangla": "-বৎসর/বয়স", "meaningEnglish": "- years old" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "なんさい", "romaji": "Nansai", "meaningBangla": "বয়স কত", "meaningEnglish": "How old" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "おいくつ", "romaji": "Oikutsu", "meaningBangla": "কত বয়স (সন্মানসূচক)", "meaningEnglish": "How old (polite)" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "はい", "romaji": "Hai", "meaningBangla": "জি/হ্যাঁ", "meaningEnglish": "Yes" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "いいえ", "romaji": "Iie", "meaningBangla": "না", "meaningEnglish": "No" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "しつれいですが", "romaji": "Shitsurei desuga", "meaningBangla": "যদি কিছু মনে না করেন", "meaningEnglish": "Excuse me, but..." },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "おなまえは", "romaji": "Onamae wa", "meaningBangla": "আপনার নাম জানতে পারি কি?", "meaningEnglish": "What is your name?" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "はじめまして", "romaji": "Hajimemashite", "meaningBangla": "আপনার সাথে প্রথমবারের মত দেখা হলো", "meaningEnglish": "Nice to meet you (for the first time)" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "どうぞよろしく", "romaji": "Douzo yoroshiku", "meaningBangla": "আপনার সাথে পরিচিত হওয়ায় আমি আনন্দিত", "meaningEnglish": "Pleased to meet you" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "こちらは〜さんです", "romaji": "Kochira wa ~san desu", "meaningBangla": "ইনি হলেন জনাব/বেগম....!", "meaningEnglish": "This is Mr./Ms. ..." },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "~からきました", "romaji": "~Kara kimashita", "meaningBangla": "আমি এসেছি ... থেকে", "meaningEnglish": "I came from ..." },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "アメリカ", "romaji": "Amerika", "meaningBangla": "আমেরিকা/যুক্তরাষ্ট্র", "meaningEnglish": "USA" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "イギリス", "romaji": "Igirisu", "meaningBangla": "যুক্তরাজ্য", "meaningEnglish": "UK" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "インド", "romaji": "Indo", "meaningBangla": "ভারত", "meaningEnglish": "India" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "インドネシア", "romaji": "Indoneshia", "meaningBangla": "ইন্দোনেশিয়া", "meaningEnglish": "Indonesia" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "かんこく", "romaji": "Kankoku", "meaningBangla": "দক্ষিণ করিয়া", "meaningEnglish": "South Korea" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "タイ", "romaji": "Tai", "meaningBangla": "থাইল্যান্ড", "meaningEnglish": "Thailand" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "ちゅうごく", "romaji": "Chuugoku", "meaningBangla": "চীন", "meaningEnglish": "China" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "ドイツ", "romaji": "Doitsu", "meaningBangla": "জার্মানি", "meaningEnglish": "Germany" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "にほん", "romaji": "Nihon", "meaningBangla": "জাপান", "meaningEnglish": "Japan" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "フランス", "romaji": "Furansu", "meaningBangla": "ফ্রান্স", "meaningEnglish": "France" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "ブラジル", "romaji": "Burajiru", "meaningBangla": "ব্রাজিল", "meaningEnglish": "Brazil" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "IMC パワーでんき", "romaji": "IMC Pawaa Denki", "meaningBangla": "কাল্পনিক প্রতিষ্ঠান", "meaningEnglish": "IMC Power Electricity (Fictional)" },
+  { "lesson": 1, "lessonName": "Lesson 1: Personal Pronouns & Basic Occupations", "japanese": "こうべびょういん", "romaji": "Koube Byouin", "meaningBangla": "কোবে হাসপাতাল (কাল্পনিক নাম)", "meaningEnglish": "Kobe Hospital (Fictional)" },
+
+            
+
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "これ", "romaji": "Kore", "meaningBangla": "এটা (বস্তু)", "meaningEnglish": "This (thing near speaker)" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "それ", "romaji": "Sore", "meaningBangla": "ওটা (বস্তু)", "meaningEnglish": "That (thing near listener)" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "あれ", "romaji": "Are", "meaningBangla": "ঐটা (একটু দূরের বস্তু)", "meaningEnglish": "That one over there (away from both)" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "この~", "romaji": "Kono~", "meaningBangla": "এই (বস্তু বা প্রাণী)", "meaningEnglish": "This ~ (item or person)" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "その~", "romaji": "Sono~", "meaningBangla": "ওই (বস্তু বা প্রাণী)", "meaningEnglish": "That ~ (item or person)" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "あの~", "romaji": "Ano~", "meaningBangla": "ঐ (একটু দূরের বস্তু বা প্রাণী)", "meaningEnglish": "That ~ over there" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "ほん", "romaji": "Hon", "meaningBangla": "বই", "meaningEnglish": "Book" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "じしょ", "romaji": "Jisho", "meaningBangla": "অভিধান/ডিকশনারি", "meaningEnglish": "Dictionary" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "ざっし", "romaji": "Zasshi", "meaningBangla": "ম্যাগাজিন", "meaningEnglish": "Magazine" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "しんぶん", "romaji": "Shinbun", "meaningBangla": "খবরের কাগজ", "meaningEnglish": "Newspaper" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "ノート", "romaji": "Nooto", "meaningBangla": "নোটবুক", "meaningEnglish": "Notebook" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "てちょう", "romaji": "Techou", "meaningBangla": "পকেটে রাখার ডায়ারি/নোটবুক", "meaningEnglish": "Pocket diary/Personal organizer" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "めいし", "romaji": "Meishi", "meaningBangla": "ভিজিটিং কার্ড", "meaningEnglish": "Business card" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "カード", "romaji": "Kaado", "meaningBangla": "কার্ড/তাস", "meaningEnglish": "Card" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "テレホンカード", "romaji": "Terehonkaado", "meaningBangla": "টেলিফোন কার্ড", "meaningEnglish": "Telephone card" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "えんぴつ", "romaji": "Enpitsu", "meaningBangla": "পেন্সিল", "meaningEnglish": "Pencil" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "ボールペン", "romaji": "Boorupen", "meaningBangla": "বলপেন", "meaningEnglish": "Ballpoint pen" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "シャープペンシル", "romaji": "Shaapupenshiru", "meaningBangla": "শার্প পেন্সিল", "meaningEnglish": "Mechanical pencil" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "かぎ", "romaji": "Kagi", "meaningBangla": "চাবি", "meaningEnglish": "Key" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "とけい", "romaji": "Tokei", "meaningBangla": "ঘড়ি", "meaningEnglish": "Watch / Clock" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "かさ", "romaji": "Kasa", "meaningBangla": "ছাতা", "meaningEnglish": "Umbrella" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "かばん", "romaji": "Kaban", "meaningBangla": "ব্যাগ/ব্রিফকেস", "meaningEnglish": "Bag / Briefcase" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "テープ", "romaji": "Teepu", "meaningBangla": "ক্যাসেট টেপ", "meaningEnglish": "Cassette tape" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "テープレコーダー", "romaji": "Teepurekoodaa", "meaningBangla": "টেপ রেকর্ডার", "meaningEnglish": "Tape recorder" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "テレビ", "romaji": "Terebi", "meaningBangla": "টেলিভিশন", "meaningEnglish": "Television" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "ラジオ", "romaji": "Rajio", "meaningBangla": "রেডিও", "meaningEnglish": "Radio" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "カメラ", "romaji": "Kamera", "meaningBangla": "ক্যামেরা", "meaningEnglish": "Camera" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "コンピューター", "romaji": "Konpyuutaa", "meaningBangla": "কম্পিউটার", "meaningEnglish": "Computer" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "じどうしゃ", "romaji": "Jidousha", "meaningBangla": "মটর গাড়ী", "meaningEnglish": "Automobile / Car" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "つくえ", "romaji": "Tsukue", "meaningBangla": "ডেসক্/টেবিল", "meaningEnglish": "Desk" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "いす", "romaji": "Isu", "meaningBangla": "চেয়ার", "meaningEnglish": "Chair" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "チョコレート", "romaji": "Chokoreeto", "meaningBangla": "চকলেট", "meaningEnglish": "Chocolate" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "コーヒー", "romaji": "Koohii", "meaningBangla": "কফি", "meaningEnglish": "Coffee" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "えいご", "romaji": "Eigo", "meaningBangla": "ইংরেজি ভাষা", "meaningEnglish": "English language" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "にほんご", "romaji": "Nihongo", "meaningBangla": "জাপানী ভাষা", "meaningEnglish": "Japanese language" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "〜ご", "romaji": "~Go", "meaningBangla": "ভাষা", "meaningEnglish": "~ Language" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "なん", "romaji": "Nan", "meaningBangla": "কী?", "meaningEnglish": "What" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "そう", "romaji": "Sou", "meaningBangla": "তাই", "meaningEnglish": "So / Like that" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "ちがいます", "romaji": "Chigaimasu", "meaningBangla": "না, সেটা নয়/আপনার বক্তব্য ঠিক নয়", "meaningEnglish": "No, it isn't / You are wrong" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "そうですか", "romaji": "Sou desu ka", "meaningBangla": "আচ্ছা/তাই নাকি?", "meaningEnglish": "I see / Is that so?" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "あのう", "romaji": "Anou", "meaningBangla": "কিছু বলার পূর্বে দ্বিধা বোধ করার জন্য ব্যবহৃত হয়", "meaningEnglish": "Well... / Um..." },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "ほんのきもちです", "romaji": "Honno kimochi desu", "meaningBangla": "এটাতো কিছুই না/সামান্য কৃতজ্ঞতার প্রতীক", "meaningEnglish": "It's a small token of my gratitude" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "どうぞ", "romaji": "Douzo", "meaningBangla": "অনুগ্রহপূর্বক নিন", "meaningEnglish": "Please / Here you go" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "どうも", "romaji": "Doumo", "meaningBangla": "ধন্যবাদ", "meaningEnglish": "Thanks" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "ありがとう", "romaji": "Arigatou", "meaningBangla": "ধন্যবাদ", "meaningEnglish": "Thank you" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "どうもありがとうございます", "romaji": "Doumo arigatou gozaimasu", "meaningBangla": "অশেষ ধন্যবাদ", "meaningEnglish": "Thank you very much" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "これからおせわになります", "romaji": "Korekara osewa ni narimasu", "meaningBangla": "এখন থেকে আপনার অনুগ্রহ/সাহায্য আশা করি", "meaningEnglish": "I hope for your kind assistance from now on" },
+  { "lesson": 2, "lessonName": "Lesson 2: Demonstratives & Everyday Objects", "japanese": "こちらこそよろしく", "romaji": "Kochirakoso yoroshiku", "meaningBangla": "আপনার কাছে থেকেও একইভাবে আশা করি", "meaningEnglish": "Likewise" },
+
+            
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "ここ", "romaji": "Koko", "meaningBangla": "এখানে (আমার কাছের স্থান)", "meaningEnglish": "Here / This place" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "そこ", "romaji": "Soko", "meaningBangla": "ওখানে (আপনার কাছের স্থান)", "meaningEnglish": "There / That place near you" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "あそこ", "romaji": "Asoko", "meaningBangla": "ঐখানে (একটু দূরের স্থান)", "meaningEnglish": "Over there / That place over there" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "どこ", "romaji": "Doko", "meaningBangla": "কোথায়/কোন স্থানে?", "meaningEnglish": "Where / Which place" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "こちら", "romaji": "Kochira", "meaningBangla": "এই দিকে (মার্জিত রুপ)", "meaningEnglish": "This way / This place (polite)" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "そちら", "romaji": "Sochira", "meaningBangla": "ওই দিকে/আপনার কাছের স্থান (মার্জিত রুপ)", "meaningEnglish": "That way / That place near you (polite)" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "あちら", "romaji": "Achira", "meaningBangla": "ঐ দিকে/বেশ একটু দূরের স্থান (মার্জিত রুপ)", "meaningEnglish": "That way over there / That place over there (polite)" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "どちら", "romaji": "Dochira", "meaningBangla": "কোন দিকে? (মার্জিত রুপ)", "meaningEnglish": "Which way / Where (polite)" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "きょうしつ", "romaji": "Kyoushitsu", "meaningBangla": "শ্রেণি কক্ষ", "meaningEnglish": "Classroom" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "しょくどう", "romaji": "Shokudou", "meaningBangla": "ক্যান্টিন/খাবার হল রুম", "meaningEnglish": "Dining hall / Canteen" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "じむしょ", "romaji": "Jimusho", "meaningBangla": "অফিস", "meaningEnglish": "Office" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "かいぎしつ", "romaji": "Kaigishitsu", "meaningBangla": "মিটিংরুম", "meaningEnglish": "Conference room / Meeting room" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "うけつけ", "romaji": "Uketsuke", "meaningBangla": "রিসেপশন ডেকস্", "meaningEnglish": "Reception desk" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "ロビー", "romaji": "Robii", "meaningBangla": "লবি", "meaningEnglish": "Lobby" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "へや", "romaji": "Heya", "meaningBangla": "রুম/কক্ষ", "meaningEnglish": "Room" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "トイレ", "romaji": "Toire", "meaningBangla": "টয়লেট", "meaningEnglish": "Toilet / Restroom" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "おてあらい", "romaji": "Otearai", "meaningBangla": "টয়লেট", "meaningEnglish": "Restroom / Bathroom" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "かいだん", "romaji": "Kaidan", "meaningBangla": "সিঁড়ি", "meaningEnglish": "Staircase" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "エレベーター", "romaji": "Erebeetaa", "meaningBangla": "লিফট", "meaningEnglish": "Elevator / Lift" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "エスカレーター", "romaji": "Esukareetaa", "meaningBangla": "চলন্ত সিঁড়ি", "meaningEnglish": "Escalator" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "くに", "romaji": "Kuni", "meaningBangla": "(আপনার) দেশ", "meaningEnglish": "Country / Nation" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "かいしゃ", "romaji": "Kaisha", "meaningBangla": "কম্পানী", "meaningEnglish": "Company" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "うち", "romaji": "Uchi", "meaningBangla": "বাসা/বাড়ি", "meaningEnglish": "House / Home" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "でんわ", "romaji": "Denwa", "meaningBangla": "টেলিফোন/টেলিফোনের বার্তা", "meaningEnglish": "Telephone / Telephone call" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "くつ", "romaji": "Kutsu", "meaningBangla": "জুতা", "meaningEnglish": "Shoes" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "ネクタイ", "romaji": "Nekutai", "meaningBangla": "নেকটাই", "meaningEnglish": "Necktie" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "ワイン", "romaji": "Wain", "meaningBangla": "ওয়াইন", "meaningEnglish": "Wine" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "たばこ", "romaji": "Tabako", "meaningBangla": "সিগারেট", "meaningEnglish": "Cigarette / Tobacco" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "うりば", "romaji": "Uriba", "meaningBangla": "ডিপার্টমেন্টাল স্টোরের কাউন্টার", "meaningEnglish": "Department / Counter (in a store)" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "ちか", "romaji": "Chika", "meaningBangla": "মাটির নিচের তলা", "meaningEnglish": "Basement" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "~かい", "romaji": "~Kai", "meaningBangla": "তলা", "meaningEnglish": "-th floor" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "なんがい", "romaji": "Nangai", "meaningBangla": "কোন তলা", "meaningEnglish": "Which floor" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "~えん", "romaji": "~En", "meaningBangla": "ইয়েন", "meaningEnglish": "... Yen" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "いくら", "romaji": "Ikura", "meaningBangla": "দাম কত?", "meaningEnglish": "How much" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "ひゃく", "romaji": "Hyaku", "meaningBangla": "শত", "meaningEnglish": "Hundred" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "せん", "romaji": "Sen", "meaningBangla": "হাজার", "meaningEnglish": "Thousand" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "まん", "romaji": "Man", "meaningBangla": "দশ হাজার", "meaningEnglish": "Ten thousand" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "すみません", "romaji": "Sumimasen", "meaningBangla": "একটু শুনুন / মাফ করবেন", "meaningEnglish": "Excuse me / I'm sorry" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "でございます", "romaji": "De gozaimasu", "meaningBangla": "দেস এর মার্জিত রুপ", "meaningEnglish": "Polite form of 'desu'" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "〜をみせてください", "romaji": "~o misete kudasai", "meaningBangla": "দয়া করে---টা দেখাবেন?", "meaningEnglish": "Please show me ~" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "じゃ", "romaji": "Ja", "meaningBangla": "তাহলে", "meaningEnglish": "Well then / In that case" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "〜をください", "romaji": "~o kudasai", "meaningBangla": "দয়া করে---টা আমাকে দিন", "meaningEnglish": "Please give me ~" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "しんおおさか", "romaji": "Shin-Osaka", "meaningBangla": "ওসাকার একটি রেল ষ্টেশনের নাম", "meaningEnglish": "Name of a station in Osaka" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "イタリア", "romaji": "Itaria", "meaningBangla": "ইতালী", "meaningEnglish": "Italy" },
+  { "lesson": 3, "lessonName": "Lesson 3: Places, Directions & Shopping", "japanese": "スイス", "romaji": "Suisu", "meaningBangla": "সুইজারল্যান্ড", "meaningEnglish": "Switzerland" },
+
+            
+
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "おきます", "romaji": "Okimasu", "meaningBangla": "ঘুম থেকে ওঠা", "meaningEnglish": "To wake up / To get up" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ねます", "romaji": "Nemasu", "meaningBangla": "ঘুমাতে যাওয়া", "meaningEnglish": "To sleep / To go to bed" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "はたらきます", "romaji": "Hatarakimasu", "meaningBangla": "কাজ করা", "meaningEnglish": "To work" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "やすみます", "romaji": "Yasumimasu", "meaningBangla": "বিশ্রাম/ছুটি নেওয়া", "meaningEnglish": "To rest / To take a holiday" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "べんきょうします", "romaji": "Benkyoushimasu", "meaningBangla": "লেখাপড়া করা", "meaningEnglish": "To study" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "おわります", "romaji": "Owarimasu", "meaningBangla": "শেষ করা", "meaningEnglish": "To finish / To end" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "デパート", "romaji": "Depaato", "meaningBangla": "ডিপার্টমেন্টাল স্টোর", "meaningEnglish": "Department store" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ぎんこう", "romaji": "Ginkou", "meaningBangla": "ব্যাংক", "meaningEnglish": "Bank" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ゆうびんきょく", "romaji": "Yuubinkyoku", "meaningBangla": "পোষ্ট অফিস", "meaningEnglish": "Post office" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "としょかん", "romaji": "Toshokan", "meaningBangla": "লাইব্রেরী", "meaningEnglish": "Library" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "びじゅつかん", "romaji": "Bijutsukan", "meaningBangla": "চারুকলা জাদুঘর/আর্ট গ্যালারী", "meaningEnglish": "Art museum / Art gallery" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "いま", "romaji": "Ima", "meaningBangla": "এখন", "meaningEnglish": "Now" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "~じ", "romaji": "~Ji", "meaningBangla": "-টা বাজে (সময়)", "meaningEnglish": "O'clock" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "~ふん", "romaji": "~Fun", "meaningBangla": "- মিনিট", "meaningEnglish": "Minute" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "はん", "romaji": "Han", "meaningBangla": "অর্ধেক", "meaningEnglish": "Half past" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "なんじ", "romaji": "Nanji", "meaningBangla": "কয়টা বাজে", "meaningEnglish": "What time" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "なんぷん", "romaji": "Nanpun", "meaningBangla": "কয় মিনিট", "meaningEnglish": "What minute" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ごぜん", "romaji": "Gozen", "meaningBangla": "পূর্বাহ্ন", "meaningEnglish": "AM" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ごご", "romaji": "Gogo", "meaningBangla": "অপরাহ্ন", "meaningEnglish": "PM" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "あさ", "romaji": "Asa", "meaningBangla": "সকালবেলা", "meaningEnglish": "Morning" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ひる", "romaji": "Hiru", "meaningBangla": "দুপুরবেলা", "meaningEnglish": "Afternoon / Daytime" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ばん", "romaji": "Ban", "meaningBangla": "রাত্রিবেলা", "meaningEnglish": "Evening" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "よる", "romaji": "Yoru", "meaningBangla": "রাত্রিবেলা", "meaningEnglish": "Night" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "おととい", "romaji": "Ototoi", "meaningBangla": "গত পরশু", "meaningEnglish": "The day before yesterday" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "きのう", "romaji": "Kinou", "meaningBangla": "গত কাল", "meaningEnglish": "Yesterday" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "きょう", "romaji": "Kyou", "meaningBangla": "আজ", "meaningEnglish": "Today" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "あした", "romaji": "Ashita", "meaningBangla": "আগামীকাল", "meaningEnglish": "Tomorrow" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "あさって", "romaji": "Asatte", "meaningBangla": "আগামী পরশু", "meaningEnglish": "The day after tomorrow" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "けさ", "romaji": "Kesa", "meaningBangla": "আজ সকাল", "meaningEnglish": "This morning" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "こんばん", "romaji": "Konban", "meaningBangla": "আজ সন্ধ্যায়/রাতে", "meaningEnglish": "This evening / Tonight" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "やすみ", "romaji": "Yasumi", "meaningBangla": "বিরতি / ছুটি", "meaningEnglish": "Rest / Holiday / Day off" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ひるやすみ", "romaji": "Hiruyasumi", "meaningBangla": "দুপুরের বিরতি", "meaningEnglish": "Lunch break" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "まいあさ", "romaji": "Maiasa", "meaningBangla": "রোজ সকালে", "meaningEnglish": "Every morning" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "まいばん", "romaji": "Maiban", "meaningBangla": "রোজ সন্ধ্যায়/রাতে", "meaningEnglish": "Every evening" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "まいにち", "romaji": "Mainichi", "meaningBangla": "রোজ/প্রতিদিন", "meaningEnglish": "Every day" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "げつようび", "romaji": "Getsuyoubi", "meaningBangla": "সোমবার", "meaningEnglish": "Monday" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "かようび", "romaji": "Kayoubi", "meaningBangla": "মঙ্গলবার", "meaningEnglish": "Tuesday" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "すいようび", "romaji": "Suiyoubi", "meaningBangla": "বুধবার", "meaningEnglish": "Wednesday" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "もくようび", "romaji": "Mokuyoubi", "meaningBangla": "বৃহস্পতিবার", "meaningEnglish": "Thursday" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "きんようび", "romaji": "Kinyoubi", "meaningBangla": "শুক্রবার", "meaningEnglish": "Friday" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "どようび", "romaji": "Doyoubi", "meaningBangla": "শনিবার", "meaningEnglish": "Saturday" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "にちようび", "romaji": "Nichiyoubi", "meaningBangla": "রবিবার", "meaningEnglish": "Sunday" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "なんようび", "romaji": "Nanyoubi", "meaningBangla": "কী বার?", "meaningEnglish": "What day of the week" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ばんごう", "romaji": "Bangou", "meaningBangla": "নাম্বার", "meaningEnglish": "Number" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "なんばん", "romaji": "Nanban", "meaningBangla": "কত নাম্বার?", "meaningEnglish": "What number" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "~から", "romaji": "~Kara", "meaningBangla": "-থেকে", "meaningEnglish": "From ~" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "~まで", "romaji": "~Made", "meaningBangla": "-পর্যন্ত", "meaningEnglish": "Until ~ / Up to ~" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "~と", "romaji": "~To", "meaningBangla": "এবং", "meaningEnglish": "And" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "そちら", "romaji": "Sochira", "meaningBangla": "আপনার স্থান", "meaningEnglish": "Your place / That way" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "たいへんですね", "romaji": "Taihen desu ne", "meaningBangla": "বেশ কষ্টকর/তাই না?", "meaningEnglish": "That's tough, isn't it?" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "えーと", "romaji": "Eeto", "meaningBangla": "আচ্ছা দেখি", "meaningEnglish": "Well... / Let me see" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "おねがいします", "romaji": "Onegaishimasu", "meaningBangla": "অনুরোধ করছি", "meaningEnglish": "Please (requesting a favor)" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "かしこまりました", "romaji": "Kashikomarimashita", "meaningBangla": "অবশ্যই", "meaningEnglish": "Certainly / Understood" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "おといあわせのばんごう", "romaji": "Otoiawase no bangou", "meaningBangla": "যে নাম্বারটা জানতে চেয়েছিলেন", "meaningEnglish": "The number you inquired about" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "どうもありがとうございました", "romaji": "Doumo arigatou gozaimashita", "meaningBangla": "অনেক অনেক ধন্যবাদ", "meaningEnglish": "Thank you very much (past tense)" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ニューヨーク", "romaji": "Nyuuyooku", "meaningBangla": "নিউইয়র্ক", "meaningEnglish": "New York" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ペキン", "romaji": "Pekin", "meaningBangla": "বেইজিং", "meaningEnglish": "Beijing" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ロンドン", "romaji": "Rondon", "meaningBangla": "লন্ডন", "meaningEnglish": "London" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "バンコク", "romaji": "Bankoku", "meaningBangla": "ব্যাংকক", "meaningEnglish": "Bangkok" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "ロサンゼルス", "romaji": "Rosanzerusu", "meaningBangla": "লজ্ এঞ্জেলস্", "meaningEnglish": "Los Angeles" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "やまとびじゅつかん", "romaji": "Yamato Bijutsukan", "meaningBangla": "ইয়ামাতো চারুকলা জাদুঘর (কাল্পনিক)", "meaningEnglish": "Yamato Art Museum (Fictional)" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "おおさかでーぱーと", "romaji": "Oosaka Depaato", "meaningBangla": "ওসাকা ডিপার্টমেন্ট ষ্টোর (কাল্পনিক)", "meaningEnglish": "Osaka Department Store (Fictional)" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "みどりとしょかん", "romaji": "Midori Toshokan", "meaningBangla": "মিদোরি লাইব্রেরী (কাল্পনিক)", "meaningEnglish": "Midori Library (Fictional)" },
+  { "lesson": 4, "lessonName": "Lesson 4: Daily Routine, Time & Days of the Week", "japanese": "アップルぎんこう", "romaji": "Appuru Ginkou", "meaningBangla": "আপেল ব্যাংক (কাল্পনিক)", "meaningEnglish": "Apple Bank (Fictional)" },
+
+
+
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "いきます", "romaji": "Ikimasu", "meaningBangla": "যাওয়া", "meaningEnglish": "To go" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "きます", "romaji": "Kimasu", "meaningBangla": "আসা", "meaningEnglish": "To come" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "かえります", "romaji": "Kaerimasu", "meaningBangla": "ফিরে আসা / ফিরে যাওয়া", "meaningEnglish": "To return / To go home" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "がっこう", "romaji": "Gakkou", "meaningBangla": "বিদ্যালয়", "meaningEnglish": "School" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "スーパー", "romaji": "Suupaa", "meaningBangla": "সুপার মার্কেট", "meaningEnglish": "Supermarket" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "えき", "romaji": "Eki", "meaningBangla": "স্টেশন", "meaningEnglish": "Station" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ひこうき", "romaji": "Hikouki", "meaningBangla": "উড়োজাহাজ", "meaningEnglish": "Airplane" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ふね", "romaji": "Fune", "meaningBangla": "জাহাজ", "meaningEnglish": "Ship / Boat" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "でんしゃ", "romaji": "Densha", "meaningBangla": "বৈদ্যুতিক ট্রেন", "meaningEnglish": "Electric train" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ちかてつ", "romaji": "Chikatetsu", "meaningBangla": "সাবওয়ে/মাটির নিচে চলার ট্রেন", "meaningEnglish": "Subway / Underground" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "しんかんせん", "romaji": "Shinkansen", "meaningBangla": "বুলেট ট্রেন", "meaningEnglish": "Bullet train" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "バス", "romaji": "Basu", "meaningBangla": "বাস", "meaningEnglish": "Bus" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "タクシー", "romaji": "Takushii", "meaningBangla": "ট্যাক্সি", "meaningEnglish": "Taxi" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "じてんしゃ", "romaji": "Jitensha", "meaningBangla": "সাইকেল", "meaningEnglish": "Bicycle" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "あるいて", "romaji": "Aruite", "meaningBangla": "পায়ে হেঁটে", "meaningEnglish": "On foot" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ひと", "romaji": "Hito", "meaningBangla": "মানুষ/লোক", "meaningEnglish": "Person / People" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ともだち", "romaji": "Tomodachi", "meaningBangla": "বন্ধু", "meaningEnglish": "Friend" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "かれ", "romaji": "Kare", "meaningBangla": "সে/ছেলে বন্ধু/প্রেমিক", "meaningEnglish": "He / Boyfriend" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "かのじょ", "romaji": "Kanojo", "meaningBangla": "সে/মেয়ে বন্ধু/প্রেমিকা", "meaningEnglish": "She / Girlfriend" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "かぞく", "romaji": "Kazoku", "meaningBangla": "পরিবার", "meaningEnglish": "Family" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ひとりで", "romaji": "Hitoride", "meaningBangla": "একা একা", "meaningEnglish": "Alone / By oneself" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "せんしゅう", "romaji": "Senshuu", "meaningBangla": "গত সপ্তাহ", "meaningEnglish": "Last week" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "こんしゅう", "romaji": "Konshuu", "meaningBangla": "এই সপ্তাহ", "meaningEnglish": "This week" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "らいしゅう", "romaji": "Raishuu", "meaningBangla": "আগামী সপ্তাহ", "meaningEnglish": "Next week" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "せんげつ", "romaji": "Sengetsu", "meaningBangla": "গত মাস", "meaningEnglish": "Last month" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "こんげつ", "romaji": "Kongetsu", "meaningBangla": "এই মাস", "meaningEnglish": "This month" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "らいげつ", "romaji": "Raigetsu", "meaningBangla": "আগামী মাস", "meaningEnglish": "Next month" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "きょねん", "romaji": "Kyonen", "meaningBangla": "গত বৎসর", "meaningEnglish": "Last year" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ことし", "romaji": "Kotoshi", "meaningBangla": "এই বৎসর", "meaningEnglish": "This year" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "らいねん", "romaji": "Rainen", "meaningBangla": "আগামী বৎসর", "meaningEnglish": "Next year" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "~がつ", "romaji": "~Gatsu", "meaningBangla": "মাস", "meaningEnglish": "Month of the year" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "なんがつ", "romaji": "Nangatsu", "meaningBangla": "কী মাস/কোন মাস", "meaningEnglish": "Which month" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ついたち", "romaji": "Tsuitachi", "meaningBangla": "মাসের ১ম দিন", "meaningEnglish": "1st day of the month" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ふつか", "romaji": "Futsuka", "meaningBangla": "মাসের ২য় দিন", "meaningEnglish": "2nd day / Two days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "みっか", "romaji": "Mikka", "meaningBangla": "মাসের ৩য় দিন", "meaningEnglish": "3rd day / Three days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "よっか", "romaji": "Yokka", "meaningBangla": "মাসের ৪র্থ দিন", "meaningEnglish": "4th day / Four days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "いつか", "romaji": "Itsuka", "meaningBangla": "মাসের ৫ম দিন", "meaningEnglish": "5th day / Five days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "むいか", "romaji": "Muika", "meaningBangla": "মাসের ৬ষ্ট দিন", "meaningEnglish": "6th day / Six days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "なのか", "romaji": "Nanoka", "meaningBangla": "মাসের ৭ম দিন", "meaningEnglish": "7th day / Seven days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ようか", "romaji": "Youka", "meaningBangla": "মাসের ৮ম দিন", "meaningEnglish": "8th day / Eight days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "こununoka", "romaji": "Kokonoka", "meaningBangla": "মাসের ৯ম দিন", "meaningEnglish": "9th day / Nine days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "とおか", "romaji": "Tooka", "meaningBangla": "মাসের ১০ দিন", "meaningEnglish": "10th day / Ten days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "じゅうよっか", "romaji": "Juuyokka", "meaningBangla": "মাসের ১৪তম দিন", "meaningEnglish": "14th day / Fourteen days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "はつか", "romaji": "Hatsuka", "meaningBangla": "মাসের ২০তম দিন", "meaningEnglish": "20th day / Twenty days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "にじゅうよっか", "romaji": "Nijuuyokka", "meaningBangla": "মাসের ২৪ তম দিন", "meaningEnglish": "24th day / Twenty-four days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "~にち", "romaji": "~Nichi", "meaningBangla": "তারিখ/দিন", "meaningEnglish": "Day / Date" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "なんにち", "romaji": "Nannichi", "meaningBangla": "মাসের কোন তারিখ/কত দিন", "meaningEnglish": "Which day / How many days" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "いつ", "romaji": "Itsu", "meaningBangla": "কবে/কখন", "meaningEnglish": "When" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "たんじょうび", "romaji": "Tanjoubi", "meaningBangla": "জন্মদিন", "meaningEnglish": "Birthday" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ふつう", "romaji": "Futsuu", "meaningBangla": "লোকাল (ট্রেন)", "meaningEnglish": "Local train" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "きゅうこう", "romaji": "Kyuukou", "meaningBangla": "এক্সপ্রেস (ট্রেন)", "meaningEnglish": "Rapid train" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "とっきゅう", "romaji": "Tokkyuu", "meaningBangla": "বিশেষ এক্সপ্রেস (ট্রেন)", "meaningEnglish": "Express train" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "つぎの", "romaji": "Tsugi no", "meaningBangla": "পরবর্তী", "meaningEnglish": "Next" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "どういたしまして", "romaji": "Douitashimashite", "meaningBangla": "আপনাকে স্বাগত (ধন্যবাদ এর উত্তরে)", "meaningEnglish": "You're welcome / Don't mention it" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "~ばんせん", "romaji": "~Bansen", "meaningBangla": "-নং প্লাটফর্ম", "meaningEnglish": "Platform number ~" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "はかた", "romaji": "Hakata", "meaningBangla": "কিউশুর একটি শহরের নাম", "meaningEnglish": "Hakata (Place in Kyushu)" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "ふしみ", "romaji": "Fushimi", "meaningBangla": "কিয়োতোর একটি শহরের নাম", "meaningEnglish": "Fushimi (Place in Kyoto)" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "こうしえん", "romaji": "Koushien", "meaningBangla": "ওসাকার একটি শহরের নাম", "meaningEnglish": "Koushien (Place in Osaka)" },
+  { "lesson": 5, "lessonName": "Lesson 5: Movement, Transportation & Calendar Dates", "japanese": "おおさかじょう", "romaji": "Oosakajou", "meaningBangla": "ওসাকা ক্যাসেল", "meaningEnglish": "Osaka Castle" },
+
+
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "たべます", "romaji": "Tabemasu", "meaningBangla": "খাওয়া", "meaningEnglish": "To eat" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "のみます", "romaji": "Nomimasu", "meaningBangla": "পান করা", "meaningEnglish": "To drink" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "すいます", "romaji": "Suimasu", "meaningBangla": "ধূমপান বা বায়ু সেবন করা", "meaningEnglish": "To smoke / To inhale" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "たばこをすいます", "romaji": "Tabako o suimasu", "meaningBangla": "সিগারেট পান করা", "meaningEnglish": "To smoke a cigarette" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "みます", "romaji": "Mimasu", "meaningBangla": "দেখা/তাকানো", "meaningEnglish": "To see / To watch" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ききます", "romaji": "Kikimasu", "meaningBangla": "শোনা/শ্রবণ করা", "meaningEnglish": "To listen / To hear" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "よみます", "romaji": "Yomimasu", "meaningBangla": "পড়া", "meaningEnglish": "To read" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "かきます", "romaji": "Kakimasu", "meaningBangla": "লেখা/ছবি আঁকা", "meaningEnglish": "To write / To draw" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "かいます", "romaji": "Kaimasu", "meaningBangla": "ক্রয় করা", "meaningEnglish": "To buy" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "とります", "romaji": "Torimasu", "meaningBangla": "তোলা (ফটো)", "meaningEnglish": "To take (a photo)" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "しゃしんをとります", "romaji": "Shashin o torimasu", "meaningBangla": "ফটো তোলা", "meaningEnglish": "To take a photograph" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "します", "romaji": "Shimasu", "meaningBangla": "করা", "meaningEnglish": "To do" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "あいます", "romaji": "Aimasu", "meaningBangla": "দেখা করা", "meaningEnglish": "To meet" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ともだちにあいます", "romaji": "Tomodachi ni aimasu", "meaningBangla": "বন্ধুর সাথে দেখা করা", "meaningEnglish": "To meet a friend" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ごはん", "romaji": "Gohan", "meaningBangla": "ভাত/খাবার", "meaningEnglish": "Meal / Cooked rice" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "あさごはん", "romaji": "Asagohan", "meaningBangla": "সকালের খাবার", "meaningEnglish": "Breakfast" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ひるごはん", "romaji": "Hirugohan", "meaningBangla": "দুপুরের খাবার", "meaningEnglish": "Lunch" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ばんごはん", "romaji": "Bangohan", "meaningBangla": "রাতের খাবার", "meaningEnglish": "Dinner" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "パン", "romaji": "Pan", "meaningBangla": "রুটি", "meaningEnglish": "Bread" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "たまご", "romaji": "Tamago", "meaningBangla": "ডিম", "meaningEnglish": "Egg" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "にく", "romaji": "Niku", "meaningBangla": "মাংস", "meaningEnglish": "Meat" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "さかな", "romaji": "Sakana", "meaningBangla": "মাছ", "meaningEnglish": "Fish" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "やさい", "romaji": "Yasai", "meaningBangla": "তরি-তরকারী", "meaningEnglish": "Vegetable" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "くだもの", "romaji": "Kudamono", "meaningBangla": "ফলমূল", "meaningEnglish": "Fruit" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "みず", "romaji": "Mizu", "meaningBangla": "পানি", "meaningEnglish": "Water" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "おちゃ", "romaji": "Ocha", "meaningBangla": "চা/সবুজ চা", "meaningEnglish": "Tea / Green tea" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "こうちゃ", "romaji": "Koucha", "meaningBangla": "চা/কালো চা", "meaningEnglish": "Black tea" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ぎゅうにゅう", "romaji": "Gyuunyuu", "meaningBangla": "গরুর দুধ", "meaningEnglish": "Milk (cow's)" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ミルク", "romaji": "Miruku", "meaningBangla": "মিলক্/দুধ", "meaningEnglish": "Milk" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ジュース", "romaji": "Juusu", "meaningBangla": "জুস", "meaningEnglish": "Juice" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ビール", "romaji": "Biiru", "meaningBangla": "বিয়ার", "meaningEnglish": "Beer" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "おさけ", "romaji": "Osake", "meaningBangla": "জাপানী ওয়াইন/এলকোহল", "meaningEnglish": "Alcohol / Sake" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ビデオ", "romaji": "Bideo", "meaningBangla": "ভিডিও টেপ/ডেক", "meaningEnglish": "Video" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "えいが", "romaji": "Eiga", "meaningBangla": "চলচ্চিত্র", "meaningEnglish": "Movie" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "てがみ", "romaji": "Tegami", "meaningBangla": "চিঠি", "meaningEnglish": "Letter" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "レポート", "romaji": "Repooto", "meaningBangla": "রিপোর্ট", "meaningEnglish": "Report" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "しゃしん", "romaji": "Shashin", "meaningBangla": "ফটো", "meaningEnglish": "Photograph" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "みせ", "romaji": "Mise", "meaningBangla": "দোকান/ষ্টোর", "meaningEnglish": "Shop / Store" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "レストラン", "romaji": "Resutoran", "meaningBangla": "রেষ্টুরেন্ট", "meaningEnglish": "Restaurant" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "にわ", "romaji": "Niwa", "meaningBangla": "বাগান", "meaningEnglish": "Garden" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "しゅくだい", "romaji": "Shukudai", "meaningBangla": "হোমওয়ার্ক", "meaningEnglish": "Homework" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "テニス", "romaji": "Tenisu", "meaningBangla": "টেনিস", "meaningEnglish": "Tennis" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "サッカー", "romaji": "Sakkaa", "meaningBangla": "ফুটবল", "meaningEnglish": "Soccer / Football" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "サッカーをします", "romaji": "Sakkaa o shimasu", "meaningBangla": "ফুটবল খেলা", "meaningEnglish": "To play soccer" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "おはなみ", "romaji": "Ohanami", "meaningBangla": "চেরিব্লোসম দেখা", "meaningEnglish": "Cherry blossom viewing" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "おはなみをします", "romaji": "Ohanami o shimasu", "meaningBangla": "চেরিব্লোসম দেখতে যাওয়া", "meaningEnglish": "To go cherry blossom viewing" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "なに", "romaji": "Nani", "meaningBangla": "কী?", "meaningEnglish": "What" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "いっしょに", "romaji": "Isshoni", "meaningBangla": "একত্রে/এক সাথে", "meaningEnglish": "Together" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ちょっと", "romaji": "Chotto", "meaningBangla": "সামান্য একটু সময়/দ্রব্য", "meaningEnglish": "A little bit / A moment" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "いつも", "romaji": "Itsumo", "meaningBangla": "সবসময়/সাধারণত", "meaningEnglish": "Always / Usually" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ときどき", "romaji": "Tokidoki", "meaningBangla": "মাঝেমাঝে", "meaningEnglish": "Sometimes" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "それから", "romaji": "Sorekara", "meaningBangla": "তারপর", "meaningEnglish": "After that / And then" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "ええ", "romaji": "Ee", "meaningBangla": "হ্যাঁ/জি", "meaningEnglish": "Yes (informal/polite)" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "いいですね", "romaji": "Ii desu ne", "meaningBangla": "সেটা ভাল", "meaningEnglish": "That's good / Sounds nice" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "わかりました", "romaji": "Wakarimashita", "meaningBangla": "ঠিক আছে/বুঝেছি", "meaningEnglish": "I understand / Understood" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "なんですか", "romaji": "Nan desu ka", "meaningBangla": "জি, বলুন?", "meaningEnglish": "Yes? / What is it?" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "じゃ、またあした", "romaji": "Ja, mata ashita", "meaningBangla": "তাহলে দেখা হবে (আগামীকাল)", "meaningEnglish": "Well, see you tomorrow" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "メキシコ", "romaji": "Mekishiko", "meaningBangla": "মেক্সিকো", "meaningEnglish": "Mexico" },
+  { "lesson": 6, "lessonName": "Lesson 6: Verbs, Daily Activities & Socializing", "japanese": "おおさかじょうこうえん", "romaji": "Oosakajou Kouen", "meaningBangla": "ওসাকা ক্যাসল পার্ক", "meaningEnglish": "Osaka Castle Park" },
+
+
+
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "きります", "romaji": "Kirimasu", "meaningBangla": "কাটা/স্পাইস করা", "meaningEnglish": "To cut / To slice" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "おくります", "romaji": "Okurimasu", "meaningBangla": "পাঠানো", "meaningEnglish": "To send" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "あげます", "romaji": "Agemasu", "meaningBangla": "দেওয়া", "meaningEnglish": "To give" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "もらいます", "romaji": "Moraimasu", "meaningBangla": "পাওয়া", "meaningEnglish": "To receive" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "かします", "romaji": "Kashimasu", "meaningBangla": "ধার দেওয়া", "meaningEnglish": "To lend" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "かります", "romaji": "Karimasu", "meaningBangla": "ধার করা", "meaningEnglish": "To borrow" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "おしえます", "romaji": "Oshiemasu", "meaningBangla": "শিখানো", "meaningEnglish": "To teach / To tell" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "ならいます", "romaji": "Naraimasu", "meaningBangla": "শেখা/পড়া", "meaningEnglish": "To learn" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "でんわをかけます", "romaji": "Denwa o kakemasu", "meaningBangla": "টেলিফোন করা", "meaningEnglish": "To make a phone call" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "て", "romaji": "Te", "meaningBangla": "হাত", "meaningEnglish": "Hand / Arm" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "はし", "romaji": "Hashi", "meaningBangla": "চপস্টিক", "meaningEnglish": "Chopsticks" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "スプーン", "romaji": "Supuun", "meaningBangla": "চামচ", "meaningEnglish": "Spoon" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "ナイフ", "romaji": "Naifu", "meaningBangla": "চাকু", "meaningEnglish": "Knife" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "フォーク", "romaji": "Fooku", "meaningBangla": "কাঁটাচামচ", "meaningEnglish": "Fork" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "はさみ", "romaji": "Hasami", "meaningBangla": "কাঁচি", "meaningEnglish": "Scissors" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "ファクス", "romaji": "Fakusu", "meaningBangla": "ফ্যাক্স", "meaningEnglish": "Fax" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "ワープロ", "romaji": "Waapuro", "meaningBangla": "ওয়ার্ড প্রসেসর", "meaningEnglish": "Word processor" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "パソコン", "romaji": "Pasokon", "meaningBangla": "পার্সোনাল কম্পিউটার", "meaningEnglish": "Personal computer" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "パンチ", "romaji": "Panchi", "meaningBangla": "পাঞ্চ মেশিন", "meaningEnglish": "Punch (hole puncher)" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "ホッチキス", "romaji": "Hotchikisu", "meaningBangla": "স্ট্যাপলার মেশিন", "meaningEnglish": "Stapler" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "セロテープ", "romaji": "Seroteepu", "meaningBangla": "স্কচ্ টেপ", "meaningEnglish": "Scotch tape / Adhesive tape" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "けしゴム", "romaji": "Keshigomu", "meaningBangla": "রাবার/ইরেজার", "meaningEnglish": "Eraser" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "かみ", "romaji": "Kami", "meaningBangla": "কাগজ", "meaningEnglish": "Paper" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "はな", "romaji": "Hana", "meaningBangla": "ফুল", "meaningEnglish": "Flower" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "シャツ", "romaji": "Shatsu", "meaningBangla": "শার্ট", "meaningEnglish": "Shirt" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "プレゼント", "romaji": "Purezento", "meaningBangla": "উপহার", "meaningEnglish": "Present / Gift" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "にもつ", "romaji": "Nimotsu", "meaningBangla": "মালপত্র/ব্যাগেজ", "meaningEnglish": "Baggage / Luggage / Parcel" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "おかね", "romaji": "Okane", "meaningBangla": "টাকা", "meaningEnglish": "Money" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "きっぷ", "romaji": "Kippu", "meaningBangla": "টিকেট", "meaningEnglish": "Ticket" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "クリスマス", "romaji": "Kurisumasu", "meaningBangla": "বড়দিন", "meaningEnglish": "Christmas" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "ちち", "romaji": "Chichi", "meaningBangla": "(আমার) বাবা", "meaningEnglish": "Father (my own)" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "はは", "romaji": "Haha", "meaningBangla": "(আমার) মা", "meaningEnglish": "Mother (my own)" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "おとうさん", "romaji": "Otousan", "meaningBangla": "(আপনার বা অন্য কারও) বাবা", "meaningEnglish": "Father (someone else's)" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "おかあさん", "romaji": "Okaasan", "meaningBangla": "(আপনার বা অন্য কারও) মা", "meaningEnglish": "Mother (someone else's)" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "もう", "romaji": "Mou", "meaningBangla": "ইতিমধ্যে", "meaningEnglish": "Already" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "まだ", "romaji": "Mada", "meaningBangla": "এখনো না", "meaningEnglish": "Not yet" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "これから", "romaji": "Korekara", "meaningBangla": "এখন থেকে / শীঘ্রই", "meaningEnglish": "From now on / Soon" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "~すてきですね", "romaji": "~Suteki desu ne", "meaningBangla": "কি সুন্দর~~~", "meaningEnglish": "What a lovely ~ / How nice ~" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "ごめんください", "romaji": "Gomen kudasai", "meaningBangla": "কেউ ভেতরে আছেন কি?", "meaningEnglish": "Excuse me / May I come in? (at a door)" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "いらっしゃい", "romaji": "Irasshai", "meaningBangla": "আসুন, আসুন", "meaningEnglish": "Welcome" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "どうぞおあがりください", "romaji": "Douzo oagari kudasai", "meaningBangla": "ভেতরে আসুন", "meaningEnglish": "Please come in" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "しつれいします", "romaji": "Shitsurei shimasu", "meaningBangla": "ধন্যবাদ, একটু বিরক্ত করবো", "meaningEnglish": "Excuse me / Thank you (entering/leaving)" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "~はいかがですか", "romaji": "~wa ikaga desu ka", "meaningBangla": "~খাবেন কি?", "meaningEnglish": "How about ~? / Would you like ~?" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "いただきます", "romaji": "Itadakimasu", "meaningBangla": "ধন্যবাদ, আমি নিচ্ছি", "meaningEnglish": "Thank you (before a meal)" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "りょこう", "romaji": "Ryokou", "meaningBangla": "ভ্রমন", "meaningEnglish": "Trip / Travel" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "りょこうをします", "romaji": "Ryokou o shimasu", "meaningBangla": "ভ্রমন করা", "meaningEnglish": "To travel" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "おみやげ", "romaji": "Omiyage", "meaningBangla": "সামান্য উপহার/স্যুভেনির", "meaningEnglish": "Souvenir / Gift" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "ヨーロッパ", "romaji": "Yooroppa", "meaningBangla": "ইউরোপ", "meaningEnglish": "Europe" },
+  { "lesson": 7, "lessonName": "Lesson 7: Giving, Receiving & Household Objects", "japanese": "スペイン", "romaji": "Supein", "meaningBangla": "স্পেন", "meaningEnglish": "Spain" },
+
+
+
+
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "ハンサム", "romaji": "Hansamu", "meaningBangla": "সুদর্শন", "meaningEnglish": "Handsome" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "きれい", "romaji": "Kirei", "meaningBangla": "সুন্দর/পরিষ্কার", "meaningEnglish": "Beautiful / Clean" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "しずか", "romaji": "Shizuka", "meaningBangla": "নীরব/শান্ত", "meaningEnglish": "Quiet" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "にぎやか", "romaji": "Nigiyaka", "meaningBangla": "সরাগম/জমজমাট", "meaningEnglish": "Lively / Bustling" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "ゆうめい", "romaji": "Yuumei", "meaningBangla": "বিখ্যাত/নামকরা", "meaningEnglish": "Famous" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "しんせつ", "romaji": "Shinsetsu", "meaningBangla": "দয়ালু", "meaningEnglish": "Kind" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "げんき", "romaji": "Genki", "meaningBangla": "সজীব/স্বাস্থবান/হাসিখুশি", "meaningEnglish": "Healthy / Energetic / Cheerful" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "ひま", "romaji": "Hima", "meaningBangla": "অবসর/হাতে সময় থাকা", "meaningEnglish": "Free time / Not busy" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "べんり", "romaji": "Benri", "meaningBangla": "সুবিধা/সুবিধাজনক", "meaningEnglish": "Convenient" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "すてき", "romaji": "Suteki", "meaningBangla": "চমৎকার/মনোরম", "meaningEnglish": "Fine / Nice / Wonderful" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "おおきい", "romaji": "Ookii", "meaningBangla": "বড়/বিশাল", "meaningEnglish": "Big / Large" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "ちいさい", "romaji": "Chiisai", "meaningBangla": "ছোট/ক্ষুদ্র", "meaningEnglish": "Small / Little" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "あたらしい", "romaji": "Atarashii", "meaningBangla": "নতুন", "meaningEnglish": "New" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "ふるい", "romaji": "Furui", "meaningBangla": "পুরানো", "meaningEnglish": "Old (not for people)" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "いい", "romaji": "Ii", "meaningBangla": "ভালো", "meaningEnglish": "Good" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "わるい", "romaji": "Warui", "meaningBangla": "খারাপ", "meaningEnglish": "Bad" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "あつい", "romaji": "Atsui", "meaningBangla": "গরম", "meaningEnglish": "Hot (weather/temperature)" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "さむい", "romaji": "Samui", "meaningBangla": "শীত (আবহাওয়াগত)", "meaningEnglish": "Cold (weather)" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "つめたい", "romaji": "Tsumetai", "meaningBangla": "ঠান্ডা (স্পর্শতা)", "meaningEnglish": "Cold (to the touch)" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "むずかしい", "romaji": "Muzukashii", "meaningBangla": "কঠিন", "meaningEnglish": "Difficult" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "やさしい", "romaji": "Yasashii", "meaningBangla": "সহজ", "meaningEnglish": "Easy" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "たかい", "romaji": "Takai", "meaningBangla": "দাম বেশি/লম্বা উঁচু", "meaningEnglish": "Expensive / Tall / High" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "やすい", "romaji": "Yasui", "meaningBangla": "সস্তা", "meaningEnglish": "Cheap" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "ひくい", "romaji": "Hikui", "meaningBangla": "নিচু", "meaningEnglish": "Low" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "おもしろい", "romaji": "Omoshiroi", "meaningBangla": "মজার/আকর্ষণীয়", "meaningEnglish": "Interesting / Funny" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "おいしい", "romaji": "Oishii", "meaningBangla": "সুস্বাদু/মজার (খাবার)", "meaningEnglish": "Delicious" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "いそがしい", "romaji": "Isogashii", "meaningBangla": "ব্যস্ত", "meaningEnglish": "Busy" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "たのしい", "romaji": "Tanoshii", "meaningBangla": "আনন্দদায়ক", "meaningEnglish": "Enjoyable / Fun" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "しろい", "romaji": "Shiroi", "meaningBangla": "সাদা", "meaningEnglish": "White" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "くろい", "romaji": "Kuroi", "meaningBangla": "কালো", "meaningEnglish": "Black" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "あかい", "romaji": "Akai", "meaningBangla": "লাল", "meaningEnglish": "Red" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "あおい", "romaji": "Aoi", "meaningBangla": "নীল", "meaningEnglish": "Blue" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "さくら", "romaji": "Sakura", "meaningBangla": "চেরী/চেরী ফুল", "meaningEnglish": "Cherry blossom" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "やま", "romaji": "Yama", "meaningBangla": "পাহাড়/পর্বত", "meaningEnglish": "Mountain" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "まち", "romaji": "Machi", "meaningBangla": "শহর/টাউন", "meaningEnglish": "Town / City" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "たべもの", "romaji": "Tabemono", "meaningBangla": "খাবার", "meaningEnglish": "Food" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "くるま", "romaji": "Kuruma", "meaningBangla": "গাড়ি/যানবাহন", "meaningEnglish": "Car / Vehicle" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "ところ", "romaji": "Tokoro", "meaningBangla": "স্থান", "meaningEnglish": "Place" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "りょう", "romaji": "Ryou", "meaningBangla": "হোস্টেল/ডরমিটরি", "meaningEnglish": "Dormitory" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "べんきょう", "romaji": "Benkyou", "meaningBangla": "লেখাপড়া", "meaningEnglish": "Study" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "せいかつ", "romaji": "Seikatsu", "meaningBangla": "জীবন যাপন", "meaningEnglish": "Life / Living" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "しごと", "romaji": "Shigoto", "meaningBangla": "কাজ/পেশা", "meaningEnglish": "Work / Business / Job" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "しごとをします", "romaji": "Shigoto o shimasu", "meaningBangla": "কাজ করা", "meaningEnglish": "To work" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "どう", "romaji": "Dou", "meaningBangla": "কেমন?", "meaningEnglish": "How" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "どんな~", "romaji": "Donna~", "meaningBangla": "কেমন?", "meaningEnglish": "What kind of ~" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "どれ", "romaji": "Dore", "meaningBangla": "কোনটা (৩ বা ততোধিক থেকে)", "meaningEnglish": "Which one (of three or more)" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "とても", "romaji": "Totemo", "meaningBangla": "খুব/বেশি", "meaningEnglish": "Very" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "あまり", "romaji": "Amari", "meaningBangla": "তেমন না (না বোধক)", "meaningEnglish": "Not very / Not much" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "そして", "romaji": "Soshite", "meaningBangla": "এবং/তারপর", "meaningEnglish": "And / And then" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "~が、", "romaji": "~ga,", "meaningBangla": "~ কিন্তু", "meaningEnglish": "~, but" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "おげんきですか", "romaji": "O-genki desu ka", "meaningBangla": "কেমন আছেন?", "meaningEnglish": "How are you?" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "そうですね", "romaji": "Sou desu ne", "meaningBangla": "আচ্ছা/ঠিক বলেছেন", "meaningEnglish": "Let me see / That's right" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "にほんのせいかつになれましたか", "romaji": "Nihon no seikatsu ni naremashita ka", "meaningBangla": "জাপানের জীবনের সাথে অভ্যস্ত হয়েছেন?", "meaningEnglish": "Have you got used to life in Japan?" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "~もいっぱいいかがですか", "romaji": "~mo ippai ikaga desu ka", "meaningBangla": "আর এক কাপ/গ্লাস চলবে নাকি?", "meaningEnglish": "Won't you have another cup of ~?" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "いいえ、けっこうです", "romaji": "Iie, kekkou desu", "meaningBangla": "না, ধন্যবাদ, যথেষ্ঠ হয়েছে", "meaningEnglish": "No, thank you" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "もう〜ですね", "romaji": "Mou~ desu ne", "meaningBangla": "ইতিমধ্যে ~ হয়ে গেছে তাই না?", "meaningEnglish": "It's already ~, isn't it?" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "そろそろしつれいします", "romaji": "Sorosoro shitsurei shimasu", "meaningBangla": "এখন আস্তে আস্তে উঠতে হচ্ছে", "meaningEnglish": "It's almost time for me to leave" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "またいらっしゃってください", "romaji": "Mata irasshatte kudasai", "meaningBangla": "আবার আসবেন", "meaningEnglish": "Please come again" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "ふじさん", "romaji": "Fujisan", "meaningBangla": "ফুজি পর্বত", "meaningEnglish": "Mt. Fuji" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "びわこ", "romaji": "Biwako", "meaningBangla": "লেক বিওয়া", "meaningEnglish": "Lake Biwa" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "シャンハイ", "romaji": "Shanhai", "meaningBangla": "সাংহাই", "meaningEnglish": "Shanghai" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "しちにんのさむらい", "romaji": "Shichinin no Samurai", "meaningBangla": "\"সাতজন সামুরাই\" চলচ্চিত্র", "meaningEnglish": "Seven Samurai (movie title)" },
+  { "lesson": 8, "lessonName": "Lesson 8: Adjectives & Descriptions", "japanese": "きんかくじ", "romaji": "Kinkakuji", "meaningBangla": "কিংকাকুজি মন্দির", "meaningEnglish": "Kinkakuji Temple" },
+
+
+
+
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "わかります", "romaji": "Wakarimasu", "meaningBangla": "বুঝা", "meaningEnglish": "To understand" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "あります", "romaji": "Arimasu", "meaningBangla": "আছে", "meaningEnglish": "To have / To exist (inanimate)" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "すき", "romaji": "Suki", "meaningBangla": "পছন্দ করা/পছন্দের", "meaningEnglish": "Like / Favorite" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "きらい", "romaji": "Kirai", "meaningBangla": "অপছন্দ করা/অপছন্দের", "meaningEnglish": "Dislike / Hate" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "じょうず", "romaji": "Jouzu", "meaningBangla": "ভালো পারা/পারদর্শী", "meaningEnglish": "Good at / Skillful" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "へた", "romaji": "Heta", "meaningBangla": "ভালো না পারা/অপারদর্শী", "meaningEnglish": "Bad at / Unskillful" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "りょうり", "romaji": "Ryouri", "meaningBangla": "পাক করা/রান্না করা খাবার", "meaningEnglish": "Cooking / Cuisine / Dish" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "のみもの", "romaji": "Nomimono", "meaningBangla": "পানীয় দ্রব্য", "meaningEnglish": "Beverage / Drink" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "スポーツ", "romaji": "Supootsu", "meaningBangla": "খেলাধূলা", "meaningEnglish": "Sports" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "スポーツをします", "romaji": "Supootsu o shimasu", "meaningBangla": "খেলাধূলা করা", "meaningEnglish": "To play sports" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "やきゅう", "romaji": "Yakyuu", "meaningBangla": "বেইজবল", "meaningEnglish": "Baseball" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "やきゅうをします", "romaji": "Yakyuu o shimasu", "meaningBangla": "বেইজবল খেলা করা", "meaningEnglish": "To play baseball" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "ダンス", "romaji": "Dansu", "meaningBangla": "ডান্স/নাচ", "meaningEnglish": "Dance" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "ダンスをします", "romaji": "Dansu o shimasu", "meaningBangla": "ডান্স/নাচ করা", "meaningEnglish": "To dance" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "おんがく", "romaji": "Ongaku", "meaningBangla": "গানবাজনা/সঙ্গীত", "meaningEnglish": "Music" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "うた", "romaji": "Uta", "meaningBangla": "গান", "meaningEnglish": "Song" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "クラシック", "romaji": "Kurashikku", "meaningBangla": "ক্লাসিক্যাল সঙ্গীত", "meaningEnglish": "Classical music" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "ジャズ", "romaji": "Jazu", "meaningBangla": "জাজ্ সঙ্গীত", "meaningEnglish": "Jazz" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "コンサ-ト", "romaji": "Konsaato", "meaningBangla": "কনসার্ট", "meaningEnglish": "Concert" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "カラオケ", "romaji": "Karaoke", "meaningBangla": "কারাওকে সঙ্গীত", "meaningEnglish": "Karaoke" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "かぶき", "romaji": "Kabuki", "meaningBangla": "কাবুকি (জাপানি ঐতিহ্যবাহী নাটক)", "meaningEnglish": "Kabuki (traditional Japanese musical drama)" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "え", "romaji": "E", "meaningBangla": "ছবি/ড্রইং", "meaningEnglish": "Picture / Drawing" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "じ", "romaji": "Ji", "meaningBangla": "অক্ষর", "meaningEnglish": "Character / Letter" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "かんじ", "romaji": "Kanji", "meaningBangla": "চাইনিজ অক্ষর", "meaningEnglish": "Kanji / Chinese characters" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "ひらがな", "romaji": "Hiragana", "meaningBangla": "হিরাগানা অক্ষর", "meaningEnglish": "Hiragana script" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "かたかな", "romaji": "Katakana", "meaningBangla": "কাতাকানা অক্ষর", "meaningEnglish": "Katakana script" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "ローマじ", "romaji": "Roomaji", "meaningBangla": "রোমান/ইংরেজী অক্ষর", "meaningEnglish": "Roman letters / Latin alphabet" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "こまかいおかね", "romaji": "Komakai okane", "meaningBangla": "ভাংতি টাকা", "meaningEnglish": "Small change" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "チケット", "romaji": "Chiketto", "meaningBangla": "টিকেট", "meaningEnglish": "Ticket" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "じかん", "romaji": "Jikan", "meaningBangla": "সময়", "meaningEnglish": "Time" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "ようじ", "romaji": "Youji", "meaningBangla": "কোন করণীয় কাজ", "meaningEnglish": "Business to take care of / Errand" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "やくそく", "romaji": "Yakusoku", "meaningBangla": "প্রতিজ্ঞা/অ্যাপয়েন্টমেন্ট", "meaningEnglish": "Promise / Appointment" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "ごしゅじん", "romaji": "Goshujin", "meaningBangla": "(অন্য কারো) স্বামী", "meaningEnglish": "Husband (someone else's)" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "おっと / しゅじん", "romaji": "Otto / Shujin", "meaningBangla": "(আমার) স্বামী", "meaningEnglish": "Husband (my own)" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "おくさん", "romaji": "Okusan", "meaningBangla": "(অন্য কারো) স্ত্রী", "meaningEnglish": "Wife (someone else's)" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "つま / かない", "romaji": "Tsuma / Kanai", "meaningBangla": "(আমার) স্ত্রী", "meaningEnglish": "Wife (my own)" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "こども", "romaji": "Kodomo", "meaningBangla": "বাচ্চা", "meaningEnglish": "Child" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "よく", "romaji": "Yoku", "meaningBangla": "ভাল/বেশ/অনেক", "meaningEnglish": "Well / Much" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "だいたい", "romaji": "Daitai", "meaningBangla": "প্রায়/মোটামুটি", "meaningEnglish": "Mostly / Roughly" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "たくさん", "romaji": "Takusan", "meaningBangla": "অনেক", "meaningEnglish": "Many / A lot" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "すこし", "romaji": "Sukoshi", "meaningBangla": "অল্প", "meaningEnglish": "A little / A few" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "ぜんぜん", "romaji": "Zenzen", "meaningBangla": "মোটেই না (না বোধক)", "meaningEnglish": "Not at all (with negative)" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "はやく", "romaji": "Hayaku", "meaningBangla": "তাড়াতাড়ি/সকালে", "meaningEnglish": "Early / Quickly" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "~から", "romaji": "~kara", "meaningBangla": "এ কারণে/সে জন্য", "meaningEnglish": "Because ~" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "どうして", "romaji": "Doushite", "meaningBangla": "কেন?", "meaningEnglish": "Why?" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "ざんねんです", "romaji": "Zannen desu", "meaningBangla": "এটা দুঃখজনক", "meaningEnglish": "That's too bad / I'm sorry to hear that" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "すみません", "romaji": "Sumimasen", "meaningBangla": "আমি দুঃখিত/মাফ করবেন", "meaningEnglish": "Excuse me / I'm sorry" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "もしもし", "romaji": "Moshimoshi", "meaningBangla": "হ্যালো (ফোনে)", "meaningEnglish": "Hello (on the phone)" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "ああ", "romaji": "Aa", "meaningBangla": "আচ্ছা/ওহ", "meaningEnglish": "Oh / I see" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "いっしょにいかがですか", "romaji": "Isshoni ikaga desu ka", "meaningBangla": "একসাথে হলে কেমন হয়?", "meaningEnglish": "Won't you join us?" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "~はちょっと", "romaji": "~wa chotto", "meaningBangla": "একটু অসুবিধা আছে", "meaningEnglish": "~ is a bit difficult (polite refusal)" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "だめですか", "romaji": "Dame desu ka", "meaningBangla": "সত্যিই পারবেন না?", "meaningEnglish": "So you can't make it?" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "またこんどおねがいします", "romaji": "Mata kondo onegaishimasu", "meaningBangla": "আবার ভবিষ্যতে দেখা হবে / আর এক সময় হবে", "meaningEnglish": "Please ask me again another time" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "おねがいします", "romaji": "Onegaishimasu", "meaningBangla": "দয়া করে (অনুরোধে ব্যবহৃত)", "meaningEnglish": "Please" },
+  { "lesson": 9, "lessonName": "Lesson 9: Preferences, Abilities & Reasons", "japanese": "おざわせいじ", "romaji": "Ozawa Seiji", "meaningBangla": "বিখ্যাত জাপানি মিউজিক কন্ডাক্টর", "meaningEnglish": "Seiji Ozawa (Famous conductor)" },
+
+
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "います", "romaji": "Imasu", "meaningBangla": "আছে/অবস্থান করছে (জীবন্ত প্রাণীর ক্ষেত্রে)", "meaningEnglish": "To be / To exist (animate)" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "あります", "romaji": "Arimasu", "meaningBangla": "আছে (নিষ্প্রাণ বস্তুর ক্ষেত্রে)", "meaningEnglish": "To be / To exist (inanimate)" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "いろいろ", "romaji": "Iroiro", "meaningBangla": "বিভিন্ন", "meaningEnglish": "Various" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "おとこのひと", "romaji": "Otoko no hito", "meaningBangla": "পুরুষ", "meaningEnglish": "Man" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "おんなのひと", "romaji": "Onna no hito", "meaningBangla": "মহিলা", "meaningEnglish": "Woman" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "おとこのこ", "romaji": "Otoko no ko", "meaningBangla": "বালক", "meaningEnglish": "Boy" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "おんなのこ", "romaji": "Onna no ko", "meaningBangla": "বালিকা", "meaningEnglish": "Girl" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "いぬ", "romaji": "Inu", "meaningBangla": "কুকুর", "meaningEnglish": "Dog" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "ねこ", "romaji": "Neko", "meaningBangla": "বিড়াল", "meaningEnglish": "Cat" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "き", "romaji": "Ki", "meaningBangla": "গাছ/কাঠ", "meaningEnglish": "Tree / Wood" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "もの", "romaji": "Mono", "meaningBangla": "জিনিস/দ্রব্য", "meaningEnglish": "Thing / Object" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "フィルム", "romaji": "Firumu", "meaningBangla": "ফিল্ম (ফটো তোলার)", "meaningEnglish": "Film" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "でんち", "romaji": "Denchi", "meaningBangla": "ব্যাটারি", "meaningEnglish": "Battery" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "はこ", "romaji": "Hako", "meaningBangla": "বাক্স/বক্স", "meaningEnglish": "Box" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "スイッチ", "romaji": "Suitchi", "meaningBangla": "সুইচ", "meaningEnglish": "Switch" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "れいぞうこ", "romaji": "Reizouko", "meaningBangla": "ফ্রিজ/রেফ্রিজারেটর", "meaningEnglish": "Refrigerator" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "テーブル", "romaji": "Teeburu", "meaningBangla": "টেবিল", "meaningEnglish": "Table" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "ベッド", "romaji": "Beddo", "meaningBangla": "বেড", "meaningEnglish": "Bed" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "たな", "romaji": "Tana", "meaningBangla": "শেলফ", "meaningEnglish": "Shelf" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "ドア", "romaji": "Doa", "meaningBangla": "দরজা", "meaningEnglish": "Door" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "まど", "romaji": "Mado", "meaningBangla": "জানালা", "meaningEnglish": "Window" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "ポスト", "romaji": "Posuto", "meaningBangla": "চিঠি পোষ্ট বক্স", "meaningEnglish": "Postbox / Mailbox" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "ビル", "romaji": "Biru", "meaningBangla": "বিল্ডিং", "meaningEnglish": "Building" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "こうえん", "romaji": "Kouen", "meaningBangla": "পার্ক", "meaningEnglish": "Park" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "きっさてん", "romaji": "Kissaten", "meaningBangla": "কফি শপ/চায়ের দোকান", "meaningEnglish": "Coffee shop / Cafe" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "ほんや", "romaji": "Hon-ya", "meaningBangla": "বইয়ের দোকান", "meaningEnglish": "Bookstore" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "~や", "romaji": "~ya", "meaningBangla": "~দোকান", "meaningEnglish": "~ shop / ~ store" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "のりば", "romaji": "Noriba", "meaningBangla": "ট্যাক্সি/বাস স্ট্যান্ড", "meaningEnglish": "Station / Place to board vehicles" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "うえ", "romaji": "Ue", "meaningBangla": "উপরে", "meaningEnglish": "Above / Up / On" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "した", "romaji": "Shita", "meaningBangla": "নিচে", "meaningEnglish": "Below / Under / Down" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "まえ", "romaji": "Mae", "meaningBangla": "সামনে/আগে", "meaningEnglish": "In front / Before" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "うしろ", "romaji": "Ushiro", "meaningBangla": "পিছনে/পরে", "meaningEnglish": "Behind / Back" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "みぎ", "romaji": "Migi", "meaningBangla": "ডান (দিকে)", "meaningEnglish": "Right (side)" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "ひだり", "romaji": "Hidari", "meaningBangla": "বাম (দিকে)", "meaningEnglish": "Left (side)" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "なか", "romaji": "Naka", "meaningBangla": "ভিতরে", "meaningEnglish": "Inside / In" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "そと", "romaji": "Soto", "meaningBangla": "বাহিরে", "meaningEnglish": "Outside" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "となり", "romaji": "Tonari", "meaningBangla": "পাশে", "meaningEnglish": "Next to / Beside" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "ちかく", "romaji": "Chikaku", "meaningBangla": "কাছে/নিকটবর্তী", "meaningEnglish": "Near / Vicinity" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "あいだ", "romaji": "Aida", "meaningBangla": "মাঝখানে/মধ্যে", "meaningEnglish": "Between / Among" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "~や~など", "romaji": "~ya ~nado", "meaningBangla": "~, এবং, ~ ইত্যাদি", "meaningEnglish": "~ and ~ etc." },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "いちばん~", "romaji": "Ichiban~", "meaningBangla": "সবচেয়ে", "meaningEnglish": "The most / Number one" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "いちばんうえ", "romaji": "Ichiban ue", "meaningBangla": "সবচেয়ে উপরে", "meaningEnglish": "The very top" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "~だんめ", "romaji": "~danme", "meaningBangla": "~নং শেলফ", "meaningEnglish": "The ~th shelf" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "どうもすみません", "romaji": "Doumo sumimasen", "meaningBangla": "মাফ করবেন / ধন্যবাদ", "meaningEnglish": "Excuse me / I'm sorry" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "チリソース", "romaji": "Chiri soosu", "meaningBangla": "চিলি সস্", "meaningEnglish": "Chili sauce" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "おく", "romaji": "Oku", "meaningBangla": "ভিতরে/পিছনে (গভীরে)", "meaningEnglish": "Back / Inner part" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "スパイスコーナー", "romaji": "Supaisu koonaa", "meaningBangla": "মশলার কর্ণার", "meaningEnglish": "Spice corner" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "とうきょうディズニーランド", "romaji": "Toukyou Dizuniirando", "meaningBangla": "টোকিও ডিজেনিল্যান্ড", "meaningEnglish": "Tokyo Disneyland" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "ユニューヤ", "romaji": "Yunyuuya", "meaningBangla": "ইউনিউইয়া ষ্টোর (কাল্পনিক)", "meaningEnglish": "Yunyuuya (fictional store)" },
+  { "lesson": 10, "lessonName": "Lesson 10: Existence & Locations", "japanese": "ストア", "romaji": "Sutoa", "meaningBangla": "সুপার স্টোর", "meaningEnglish": "Store" },
+        ];
+
+        let selectedLessons = new Set([1,2,3,4]);
+        let currentView = 'list';
+        let quizQueue = [];
+        let skipped = [];
+        let currentIndex = 0;
+        let attempts = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let currentItem = null;
+        let canSpeak = false;
+
+        function normalizeText(text) {
+            if (!text) return "";
+            return text.toLowerCase()
+                .replace(/[?.!]/g, '')
+                .replace(/\s*\(.*?\)\s*/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function isMatch(userInput, correctAnswer) {
+            if (!userInput || !correctAnswer) return false;
+            const user = normalizeText(userInput);
+            const correct = normalizeText(correctAnswer);
+
+            if (correct.includes('/')) {
+                const options = correct.split('/').map(opt => opt.trim());
+                return options.some(opt => user === opt || opt.includes(user) || user.includes(opt));
+            }
+            return user === correct || correct.includes(user) || user.includes(correct);
+        }
+
+        function speakJapanese(text) {
+            if ('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'ja-JP';
+                speechSynthesis.speak(u);
+            }
+        }
+
+        // ==================== RENDER FUNCTIONS ====================
+        function renderLessonFilters() {
+            const container = document.getElementById('lesson-filters');
+            container.innerHTML = '';
+            const unique = [...new Set(vocabData.map(v => v.lesson))];
+            unique.forEach(num => {
+                const active = selectedLessons.has(num);
+                const btn = document.createElement('button');
+                btn.className = `px-5 py-2 rounded-3xl text-sm font-medium transition-all ${active ? 'bg-red-500 text-white' : 'bg-white border border-gray-300'}`;
+                btn.textContent = `Lesson ${num}`;
+                btn.onclick = () => {
+                    if (selectedLessons.has(num)) selectedLessons.delete(num);
+                    else selectedLessons.add(num);
+                    renderLessonFilters();
+                    renderVocabList();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderVocabList() {
+            const container = document.getElementById('vocab-list');
+            container.innerHTML = '';
+            const filtered = vocabData.filter(v => selectedLessons.has(v.lesson));
+
+            const grouped = {};
+            filtered.forEach(item => {
+                if (!grouped[item.lesson]) grouped[item.lesson] = [];
+                grouped[item.lesson].push(item);
+            });
+
+            Object.keys(grouped).sort((a,b)=>a-b).forEach(lessonNum => {
+                const items = grouped[lessonNum];
+                const header = document.createElement('div');
+                header.className = "col-span-full mt-8";
+                header.innerHTML = `
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center font-bold">${lessonNum}</div>
+                        <h2 class="text-2xl font-semibold">${items[0].lessonName}</h2>
+                    </div>`;
+                container.appendChild(header);
+
+                items.forEach(v => {
+                    const card = document.createElement('div');
+                    card.className = "vocab-card bg-white border border-gray-100 rounded-3xl p-6 cursor-pointer";
+                    card.innerHTML = `
+                        <div class="jp-font text-4xl font-medium mb-3">${v.japanese}</div>
+                        <div class="text-lg font-medium">${v.romaji}</div>
+                        <div class="mt-4 text-gray-600">${v.meaningEnglish}</div>
+                        <div class="text-gray-700">${v.meaningBangla}</div>
+                    `;
+                    card.onclick = () => speakJapanese(v.japanese);
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        function renderModalLessons() {
+            const container = document.getElementById('modal-lesson-list');
+            container.innerHTML = '';
+            const unique = [...new Set(vocabData.map(v => v.lesson))];
+            unique.forEach(num => {
+                const lesson = vocabData.find(v => v.lesson === num);
+                const div = document.createElement('div');
+                div.className = `p-5 rounded-2xl cursor-pointer flex justify-between items-center ${selectedLessons.has(num) ? 'bg-red-50 border border-red-200' : 'hover:bg-gray-50'}`;
+                div.innerHTML = `
+                    <div>
+                        <div class="font-semibold">Lesson ${num}</div>
+                        <div class="text-sm text-gray-500">${lesson.lessonName}</div>
+                    </div>
+                    <input type="checkbox" ${selectedLessons.has(num) ? 'checked' : ''} class="w-6 h-6 accent-red-500">
+                `;
+                div.onclick = (e) => {
+                    if (e.target.type !== 'checkbox') {
+                        selectedLessons.has(num) ? selectedLessons.delete(num) : selectedLessons.add(num);
+                        renderModalLessons();
+                    }
+                };
+                container.appendChild(div);
+            });
+        }
+
+        // ==================== QUIZ FUNCTIONS ====================
+        function toggleView() {
+            if (currentView === 'list') {
+                document.getElementById('list-view').classList.add('hidden');
+                document.getElementById('lesson-modal').classList.remove('hidden');
+            } else {
+                endQuiz();
+            }
+        }
+
+        function cancelModal() {
+            document.getElementById('lesson-modal').classList.add('hidden');
+            document.getElementById('list-view').classList.remove('hidden');
+        }
+
+        function startQuiz() {
+            hideModal();
+            const filtered = vocabData.filter(v => selectedLessons.has(v.lesson));
+            if (filtered.length === 0) {
+                alert("Please select at least one lesson!");
+                cancelModal();
+                return;
+            }
+
+            quizQueue = [...filtered].sort(() => Math.random() - 0.5);
+            skipped = [];
+            currentIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+
+            document.getElementById('list-view').classList.add('hidden');
+            document.getElementById('quiz-view').classList.remove('hidden');
+            currentView = 'quiz';
+            document.getElementById('toggle-text').textContent = 'Back to List';
+
+            loadCurrentQuestion();
+        }
+
+        function hideModal() {
+            document.getElementById('lesson-modal').classList.add('hidden');
+        }
+
+        function loadCurrentQuestion() {
+            if (currentIndex >= quizQueue.length) {
+                if (skipped.length > 0) {
+                    quizQueue = [...quizQueue, ...skipped];
+                    skipped = [];
+                } else {
+                    return showCompletionModal();
+                }
+            }
+
+            currentItem = quizQueue[currentIndex];
+            canSpeak = false;
+            attempts = 0;
+
+            const jpElement = document.getElementById('quiz-japanese');
+            jpElement.textContent = currentItem.japanese;
+            jpElement.classList.remove('clickable');
+
+            document.getElementById('current-lesson').textContent = currentItem.lessonName;
+            document.getElementById('input-romaji').value = '';
+            document.getElementById('input-meaning').value = '';
+            document.getElementById('feedback').classList.add('hidden');
+
+            document.getElementById('check-btn').classList.remove('hidden');
+            document.getElementById('skip-btn').classList.add('hidden');
+            document.getElementById('reveal-btn').classList.add('hidden');
+
+            updateStats();
+        }
+
+        function submitAnswer() {
+            const userRomaji = document.getElementById('input-romaji').value.trim();
+            const userMeaning = document.getElementById('input-meaning').value.trim();
+
+            const correctRomaji = currentItem.romaji.toLowerCase();
+            const romajiMatch = userRomaji.length > 1 && correctRomaji.includes(userRomaji.toLowerCase());
+            const meaningMatch = isMatch(userMeaning, currentItem.meaningEnglish) || isMatch(userMeaning, currentItem.meaningBangla);
+
+            attempts++;
+
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden');
+
+            if (romajiMatch && meaningMatch) {
+                feedback.innerHTML = `<div class="bg-green-100 text-green-700 p-6 rounded-2xl">✅ Correct!</div>`;
+                correctCount++;
+                canSpeak = true;
+                document.getElementById('quiz-japanese').classList.add('clickable');
+                speakJapanese(currentItem.japanese);
+                setTimeout(nextQuestion, 1300);
+            } else if (attempts >= 3) {
+                feedback.innerHTML = `<div class="bg-red-100 text-red-700 p-6 rounded-2xl">❌ Out of attempts</div>`;
+                incorrectCount++;
+                document.getElementById('check-btn').classList.add('hidden');
+                document.getElementById('skip-btn').classList.remove('hidden');
+                document.getElementById('reveal-btn').classList.remove('hidden');
+            } else {
+                feedback.innerHTML = `<div class="bg-orange-100 text-orange-700 p-6 rounded-2xl">Try again • ${3 - attempts} left</div>`;
+            }
+            updateStats();
+        }
+
+        function skipWord() {
+            skipped.push(currentItem);
+            nextQuestion();
+        }
+
+        function revealAnswer() {
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden');
+            feedback.innerHTML = `
+                <div class="bg-amber-50 border border-amber-300 p-8 rounded-2xl text-left">
+                    <p class="font-medium text-amber-700 mb-3">Correct Answer:</p>
+                    <p class="jp-font text-5xl mb-2">${currentItem.japanese}</p>
+                    <p class="text-2xl">${currentItem.romaji}</p>
+                    <p class="mt-4">${currentItem.meaningEnglish} / ${currentItem.meaningBangla}</p>
+                    <button onclick="nextQuestion()" class="mt-8 w-full py-5 bg-amber-600 text-white rounded-3xl">Continue →</button>
+                </div>`;
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            loadCurrentQuestion();
+        }
+
+        function updateStats() {
+            const totalAttempted = correctCount + incorrectCount;
+            const accuracy = totalAttempted === 0 ? 100 : Math.round((correctCount / totalAttempted) * 100);
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+
+            const total = quizQueue.length + skipped.length;
+            const progress = Math.round((currentIndex / total) * 100) || 0;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${total}`;
+        }
+
+        function speakCurrent() {
+            if (canSpeak && currentItem) speakJapanese(currentItem.japanese);
+        }
+
+        function showCompletionModal() {
+            document.getElementById('final-correct').textContent = correctCount;
+            document.getElementById('final-incorrect').textContent = incorrectCount;
+            const total = correctCount + incorrectCount;
+            const acc = total ? Math.round((correctCount / total) * 100) : 0;
+            document.getElementById('final-accuracy').textContent = acc + '%';
+            document.getElementById('completion-modal').classList.remove('hidden');
+        }
+
+        function retryQuiz() {
+            document.getElementById('completion-modal').classList.add('hidden');
+            const filtered = vocabData.filter(v => selectedLessons.has(v.lesson));
+            quizQueue = [...filtered].sort(() => Math.random() - 0.5);
+            skipped = [];
+            currentIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            loadCurrentQuestion();
+        }
+
+        function chooseNewLessons() {
+            document.getElementById('completion-modal').classList.add('hidden');
+            document.getElementById('quiz-view').classList.add('hidden');
+            document.getElementById('list-view').classList.remove('hidden');
+            currentView = 'list';
+            document.getElementById('lesson-modal').classList.remove('hidden');
+        }
+
+        function closeCompletionModal() {
+            document.getElementById('completion-modal').classList.add('hidden');
+            document.getElementById('quiz-view').classList.add('hidden');
+            document.getElementById('list-view').classList.remove('hidden');
+            currentView = 'list';
+            document.getElementById('toggle-text').textContent = 'Start Quiz Mode';
+        }
+
+        function endQuiz() {
+            if (confirm("Are you sure you want to end the quiz?")) {
+                closeCompletionModal();
+            }
+        }
+
+        function toggleAllLessons(selectAll) {
+            if (selectAll) selectedLessons = new Set(vocabData.map(v => v.lesson));
+            else selectedLessons.clear();
+            renderLessonFilters();
+            renderVocabList();
+        }
+
+        // Enter Key Navigation (Fixed)
+        document.addEventListener('keydown', function(e) {
+            if (currentView !== 'quiz') return;
+            if (e.key !== 'Enter') return;
+
+            const romajiField = document.getElementById('input-romaji');
+            const meaningField = document.getElementById('input-meaning');
+            const checkVisible = !document.getElementById('check-btn').classList.contains('hidden');
+            const revealVisible = !document.getElementById('reveal-btn').classList.contains('hidden');
+            const skipVisible = !document.getElementById('skip-btn').classList.contains('hidden');
+
+            if (document.activeElement === romajiField) {
+                meaningField.focus();
+            } else {
+                if (checkVisible) {
+                    submitAnswer();
+                } else if (revealVisible) {
+                    revealAnswer();
+                } else if (skipVisible) {
+                    skipWord();
+                }
+            }
+        });
+
+        window.onload = () => {
+            renderLessonFilters();
+            renderVocabList();
+            renderModalLessons();
+        };
+    </script>
+</body>
+</html>
