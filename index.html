@@ -808,6 +808,17 @@
         }
 
         // ==================== RENDER FUNCTIONS ====================
+
+function focusRomaji() {
+    const romajiInput = document.getElementById('input-romaji');
+    if (romajiInput) {
+        romajiInput.focus();
+        romajiInput.select();
+    }
+}
+
+
+
         function renderLessonFilters() {
             const container = document.getElementById('lesson-filters');
             container.innerHTML = '';
@@ -959,6 +970,7 @@
             document.getElementById('reveal-btn').classList.add('hidden');
 
             updateStats();
+setTimeout(focusRomaji, 80);
         }
 
         function submitAnswer() {
@@ -989,7 +1001,8 @@
                 document.getElementById('reveal-btn').classList.remove('hidden');
             } else {
                 feedback.innerHTML = `<div class="bg-orange-100 text-orange-700 p-6 rounded-2xl">Try again • ${3 - attempts} left</div>`;
-            }
+           
+          }
             updateStats();
         }
 
