@@ -781,6 +781,7 @@
         function normalizeText(text) {
             if (!text) return "";
             return text.toLowerCase()
+     
                 .replace(/[?.!]/g, '')
                 .replace(/\s*\(.*?\)\s*/g, '')
                 .replace(/\s+/g, ' ')
@@ -789,16 +790,20 @@
 
         function isMatch(userInput, correctAnswer) {
             if (!userInput || !correctAnswer) return false;
+            
             const user = normalizeText(userInput);
+            if (user.length === 0) return false;
+
             const correct = normalizeText(correctAnswer);
 
-            if (correct.includes('/')) {
-                const options = correct.split('/').map(opt => opt.trim());
-                return options.some(opt => user === opt || opt.includes(user) || user.includes(opt));
-            }
-            return user === correct || correct.includes(user) || user.includes(correct);
-        }
 
+            if (correct.includes('/')) {
+                const options = correct.split('/').map(opt => normalizeText(opt));
+                return options.some(opt => user === opt);   
+            }
+
+            return user === correct;
+        }
         function speakJapanese(text) {
             if ('speechSynthesis' in window) {
                 const u = new SpeechSynthesisUtterance(text);
