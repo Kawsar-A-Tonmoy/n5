@@ -95,7 +95,7 @@
     </nav>
 
     <script src="data-vocab.js"></script>
-   <script src="data-kanji.js"></script>
+    <script src="data-kanji.js"></script>
     <script src="app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -141,6 +141,8 @@
         function createStatusBadgeMarkup(status) {
             if (status === 'Mastered') {
                 return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-teal-50 text-teal-700 border border-teal-200 rounded">Mastered</span>`;
+            } else if (status === 'Troublesome') {
+                return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-red-50 text-red-700 border border-red-200 rounded">Troublesome</span>`;
             } else if (status === 'Learning') {
                 return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 rounded">Learning</span>`;
             } else {

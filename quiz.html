@@ -48,12 +48,12 @@
                     <div>
                         <label class="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Include Datasets</label>
                         <div class="flex gap-4 bg-gray-50 p-2.5 rounded-lg border border-gray-200 text-sm">
-<label class="flex items-center gap-2 cursor-pointer font-medium">
-    <input type="checkbox" id="target-include-vocab" checked onchange="populateConfigLayout()" class="rounded text-primary focus:ring-0"> Vocabulary
-</label>
-<label class="flex items-center gap-2 cursor-pointer font-medium">
-    <input type="checkbox" id="target-include-kanji" checked onchange="populateConfigLayout()" class="rounded text-primary focus:ring-0"> Kanji
-</label>
+                            <label class="flex items-center gap-2 cursor-pointer font-medium">
+                                <input type="checkbox" id="target-include-vocab" checked onchange="populateConfigLayout()" class="rounded text-primary focus:ring-0"> Vocabulary
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer font-medium">
+                                <input type="checkbox" id="target-include-kanji" checked onchange="populateConfigLayout()" class="rounded text-primary focus:ring-0"> Kanji
+                            </label>
                         </div>
                     </div>
                     <div>
@@ -149,7 +149,8 @@
         </div>
     </main>
 
-    <script src="data-vocab.js"></script>    <script src="data-kanji.js"></script>
+    <script src="data-vocab.js"></script>
+    <script src="data-kanji.js"></script>
     <script src="app.js"></script>
     <script>
         let selectedLessonSet = new Set();
@@ -163,59 +164,69 @@
         let isExhaustedState = false;
         let autoAdvanceTimer = null; 
 
-        function textCleanse(str) {
-            if (!str) return "";
-            return str.toLowerCase().replace(/[?.!,…~:\-()]/g, '').replace(/\s+/g, ' ').trim();
+        // Strict text matching logic from legacy module
+        function normalizeText(text) {
+            if (!text) return "";
+            return text.toLowerCase()
+                .replace(/[?.!~,\-]/g, '') // Strips tildes, commas, dashes, and periods
+                .replace(/\s*\(.*?\)\s*/g, '') // Strips anything inside parentheses
+                .replace(/\s+/g, ' ') // Condenses extra spaces
+                .trim();
         }
 
-        function verifyMatchPattern(input, correctPattern) {
-            if (!input || !correctPattern) return false;
-            const cleanedInput = textCleanse(input);
-            if (cleanedInput.length === 0) return false;
-            const splitTargets = correctPattern.split('/').map(opt => textCleanse(opt));
-            return splitTargets.some(target => cleanedInput === target || (target.includes(cleanedInput) && cleanedInput.length > 2));
+        function isMatch(userInput, correctAnswer) {
+            if (!userInput || !correctAnswer) return false;
+            
+            const user = normalizeText(userInput);
+            if (user.length === 0) return false;
+
+            const correct = normalizeText(correctAnswer);
+
+            // Check against slashed options strictly
+            if (correct.includes('/')) {
+                const options = correct.split('/').map(opt => normalizeText(opt));
+                return options.some(opt => user === opt);   
+            }
+
+            return user === correct;
         }
 
-function populateConfigLayout() {
-    const vocabEnabled = document.getElementById('target-include-vocab').checked;
-    const kanjiEnabled = document.getElementById('target-include-kanji').checked;
-    const wrapper = document.getElementById('lesson-checkbox-grid');
-    
-    // 1. Get the raw data safely
-    const vocab = typeof vocabData !== 'undefined' ? vocabData : [];
-    const kanji = typeof kanjiData !== 'undefined' ? kanjiData : [];
-    
+        function populateConfigLayout() {
+            const vocabEnabled = document.getElementById('target-include-vocab').checked;
+            const kanjiEnabled = document.getElementById('target-include-kanji').checked;
+            const wrapper = document.getElementById('lesson-checkbox-grid');
+            
+            const vocab = typeof vocabData !== 'undefined' ? vocabData : [];
+            const kanji = typeof kanjiData !== 'undefined' ? kanjiData : [];
+            
+            let availableLessonNumbers = new Set();
+            if (vocabEnabled) vocab.forEach(v => availableLessonNumbers.add(v.lesson));
+            if (kanjiEnabled) kanji.forEach(k => availableLessonNumbers.add(k.lesson));
+            
+            wrapper.innerHTML = '';
+            const sortedLessons = Array.from(availableLessonNumbers).sort((a,b) => a - b);
+            
+            if (sortedLessons.length === 0) {
+                wrapper.innerHTML = '<p class="text-xs text-secondary p-4 italic">No chapters available for the selected datasets.</p>';
+                return;
+            }
 
-    let availableLessonNumbers = new Set();
-    if (vocabEnabled) vocab.forEach(v => availableLessonNumbers.add(v.lesson));
-    if (kanjiEnabled) kanji.forEach(k => availableLessonNumbers.add(k.lesson));
-    
-    wrapper.innerHTML = '';
-    const sortedLessons = Array.from(availableLessonNumbers).sort((a,b) => a - b);
-    
-    if (sortedLessons.length === 0) {
-        wrapper.innerHTML = '<p class="text-xs text-secondary p-4 italic">No chapters available for the selected datasets.</p>';
-        return;
-    }
-
-    sortedLessons.forEach(n => {
-        // Try to find the lesson name from vocab first, fallback to kanji
-        const item = vocab.find(v => v.lesson === n) || kanji.find(k => k.lesson === n);
-        const cleanName = item.lessonName ? (item.lessonName.split(':')[1] || item.lessonName) : `Lesson Content ${n}`;
-        
-        const lbl = document.createElement('label');
-        lbl.className = "flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg cursor-pointer transition-colors";
-        
-        // Restore checked state if it was already selected
-        const isChecked = selectedLessonSet.has(n) ? 'checked' : '';
-        
-        lbl.innerHTML = `
-            <input type="checkbox" value="${n}" ${isChecked} onchange="handleToggleSelection(this)" class="w-4 h-4 text-primary accent-primary rounded border-gray-300">
-            <span class="text-xs font-bold text-slate-800">Ch. ${n}<span class="block text-[10px] font-normal text-secondary truncate max-w-[200px]">${cleanName}</span></span>
-        `;
-        wrapper.appendChild(lbl);
-    });
-}
+            sortedLessons.forEach(n => {
+                const item = vocab.find(v => v.lesson === n) || kanji.find(k => k.lesson === n);
+                const cleanName = item.lessonName ? (item.lessonName.split(':')[1] || item.lessonName) : `Lesson Content ${n}`;
+                
+                const lbl = document.createElement('label');
+                lbl.className = "flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg cursor-pointer transition-colors";
+                
+                const isChecked = selectedLessonSet.has(n) ? 'checked' : '';
+                
+                lbl.innerHTML = `
+                    <input type="checkbox" value="${n}" ${isChecked} onchange="handleToggleSelection(this)" class="w-4 h-4 text-primary accent-primary rounded border-gray-300">
+                    <span class="text-xs font-bold text-slate-800">Ch. ${n}<span class="block text-[10px] font-normal text-secondary truncate max-w-[200px]">${cleanName}</span></span>
+                `;
+                wrapper.appendChild(lbl);
+            });
+        }
 
         function handleToggleSelection(box) {
             const v = parseInt(box.value);
@@ -333,8 +344,9 @@ function populateConfigLayout() {
             const userRomaji = document.getElementById('input-kana-romaji').value;
             const userMeaning = document.getElementById('input-native-meaning').value;
 
-            const isRomajiValid = verifyMatchPattern(userRomaji, activeCard.romaji);
-            const isMeaningValid = verifyMatchPattern(userMeaning, activeCard.meaningEnglish) || (activeCard.meaningBangla && verifyMatchPattern(userMeaning, activeCard.meaningBangla));
+            // Strict Validation Protocol
+            const isRomajiValid = isMatch(userRomaji, activeCard.romaji);
+            const isMeaningValid = isMatch(userMeaning, activeCard.meaningEnglish) || (activeCard.meaningBangla && isMatch(userMeaning, activeCard.meaningBangla));
 
             attemptCounter++;
             const banner = document.getElementById('alert-banner');
@@ -347,7 +359,6 @@ function populateConfigLayout() {
                 document.getElementById('input-native-meaning').className = "w-full p-3.5 bg-green-50 border border-green-300 rounded-lg text-green-900 outline-none text-md";
                 
                 countedCorrect++;
-                // Track if it's the very first try to clear troublesome status
                 recordAttempt(activeCard.japanese, true, attemptCounter === 1);
                 
                 setAudioListeningState(true);

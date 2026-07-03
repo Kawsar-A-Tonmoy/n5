@@ -47,6 +47,7 @@ function getWordStatus(japaneseWord) {
     
     if (!stats || stats.attempts === 0) return 'Unseen';
     if (stats.streak >= 3) return 'Mastered';
+    if (stats.incorrect > 0) return 'Troublesome'; // Flag words struggling in the learning phase
     return 'Learning';
 }
 
@@ -63,16 +64,16 @@ function getOverallStats() {
         const status = getWordStatus(word.japanese);
         const type = word.type || 'vocab';
 
-        // Process overall tracking
+        // Process overall tracking (Group troublesome under learning for pure metrics)
         if (status === 'Mastered') stats.overall.mastered++;
-        else if (status === 'Learning') stats.overall.learning++;
+        else if (status === 'Learning' || status === 'Troublesome') stats.overall.learning++;
         else stats.overall.unseen++;
 
         // Process explicit type split mapping
         if (stats[type]) {
             stats[type].total++;
             if (status === 'Mastered') stats[type].mastered++;
-            else if (status === 'Learning') stats[type].learning++;
+            else if (status === 'Learning' || status === 'Troublesome') stats[type].learning++;
             else stats[type].unseen++;
         }
     });
@@ -90,10 +91,8 @@ function getLessonStats() {
 
     items.forEach(word => {
         const type = word.type || 'vocab';
-        // Fallback to "All" if a specific item lacks a lesson or category tag
         const rawId = word.lesson || word.category || 'All'; 
         
-        // Key isolates vocab and kanji so they don't overwrite each other if they share an ID (like "1")
         const mapKey = `${type}-${rawId}`;
 
         if (!lessonMap[mapKey]) {
@@ -112,7 +111,6 @@ function getLessonStats() {
         }
     });
 
-    // Sort: Vocab blocks first, then Kanji blocks. Numerically sorted within.
     return Object.values(lessonMap).sort((a, b) => {
         if (a.type === 'vocab' && b.type === 'kanji') return -1;
         if (a.type === 'kanji' && b.type === 'vocab') return 1;
@@ -137,7 +135,8 @@ function getTroublesomeWords() {
         }
     });
 
-    return list.sort((a, b) => b.errorRate - a.errorRate || b.stats.incorrect - a.stats.incorrect).slice(0, 5);
+    // Removed the .slice(0, 5) limit to allow infinite rendering
+    return list.sort((a, b) => b.errorRate - a.errorRate || b.stats.incorrect - a.stats.incorrect);
 }
 
 function speakJapanese(text) {
