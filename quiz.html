@@ -169,7 +169,7 @@
         function normalizeText(text) {
             if (!text) return "";
             return text.toLowerCase()
-                .replace(/[?.!~,\-]/g, '') // Strips tildes, commas, dashes, and periods
+                .replace(/['?.!~,\-]/g, '') // Strips tildes, commas, dashes, and periods
                 .replace(/\s*\(.*?\)\s*/g, '') // Strips anything inside parentheses
                 .replace(/\s+/g, ' ') // Condenses extra spaces
                 .trim();
