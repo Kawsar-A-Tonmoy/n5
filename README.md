@@ -20,7 +20,6 @@ An Android version is also available for users who prefer studying on their phon
 
 * Japanese vocabulary learning
 * N5 kanji learning
-* Hiragana and Katakana practice
 * Interactive quizzes
 * Reading practice
 * Local progress saving
