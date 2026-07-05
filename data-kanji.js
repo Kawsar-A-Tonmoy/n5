@@ -14,7 +14,7 @@ const kanjiData =[
 
   
   { "lesson": 2, "lessonName": "Lesson 2: Kanji - Numbers", "japanese": "一", "romaji": "Ichi", "meaningBangla": "এক", "meaningEnglish": "One" },
-  { "lesson": 2, "lessonName": "Lesson 2: Kanji - Numbers", "japanese": "二", "romaji": "Ni", "meaningBangla": "দুই", "meaningEnglish": "Two" },
+  { "lesson": 2, "lessonName": "Lesson 2: Kanji - Numbers", "japanese": "ニ", "romaji": "Ni", "meaningBangla": "দুই", "meaningEnglish": "Two" },
   { "lesson": 2, "lessonName": "Lesson 2: Kanji - Numbers", "japanese": "三", "romaji": "San", "meaningBangla": "তিন", "meaningEnglish": "Three" },
   { "lesson": 2, "lessonName": "Lesson 2: Kanji - Numbers", "japanese": "四", "romaji": "Yon", "meaningBangla": "চার", "meaningEnglish": "Four" },
   { "lesson": 2, "lessonName": "Lesson 2: Kanji - Numbers", "japanese": "五", "romaji": "Go", "meaningBangla": "পাঁচ", "meaningEnglish": "Five" },
