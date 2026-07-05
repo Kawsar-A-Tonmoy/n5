@@ -29,7 +29,7 @@
 
     <header class="bg-white border-b border-border-stable">
         <div class="flex justify-between items-center w-full px-4 md:px-8 max-w-[1024px] mx-auto h-16">
-            <div class="text-xl font-bold text-primary flex items-center gap-2"><div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-2xl flex items-center justify-center text-white text-3xl font-bold">日</div>N5 Mastery</div>
+            <div class="text-xl font-bold text-primary flex items-center gap-2"><div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-2xl flex items-center justify-center text-white text-2xl sm:text-3xl font-bold">日</div>N5 Mastery</div>
             <nav class="hidden md:flex gap-6 items-center">
                 <a class="text-secondary hover:text-primary" href="index.html">Dashboard</a>
                 <a class="text-primary font-bold border-b-2 border-primary pb-1" href="quiz.html">Quiz</a>
@@ -38,7 +38,7 @@
         </div>
     </header>
 
-    <main class="flex-grow flex items-center justify-center p-4">
+    <main class="flex-grow flex items-center justify-center p-4 pb-20 md:pb-4">
         <div class="w-full max-w-2xl">
             
             <div id="config-panel" class="bg-white border border-border-stable rounded-xl p-6 md:p-8 shadow-sm">
@@ -48,7 +48,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                     <div>
                         <label class="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Include Datasets</label>
-                        <div class="flex gap-4 bg-gray-50 p-2.5 rounded-lg border border-gray-200 text-sm">
+                        <div class="flex flex-wrap sm:flex-nowrap gap-4 bg-gray-50 p-2.5 rounded-lg border border-gray-200 text-sm">
                             <label class="flex items-center gap-2 cursor-pointer font-medium">
                                 <input type="checkbox" id="target-include-vocab" checked onchange="populateConfigLayout()" class="rounded text-primary focus:ring-0"> Vocabulary
                             </label>
@@ -92,8 +92,8 @@
                     <button id="audio-speak-btn" onclick="triggerVoiceSpeak()" class="absolute top-3 right-3 text-gray-300 cursor-not-allowed" disabled>
                         <span class="material-symbols-outlined">volume_up</span>
                     </button>
-                    <div class="inline-block text-center select-none">
-                        <ruby id="display-japanese-char" class="font-bold tracking-wide text-5xl md:text-6xl text-slate-800 font-jp"></ruby>
+                    <div class="inline-block text-center select-none overflow-hidden max-w-full px-2">
+                        <ruby id="display-japanese-char" class="font-bold tracking-wide text-4xl sm:text-5xl md:text-6xl text-slate-800 font-jp"></ruby>
                     </div>
                 </div>
 
@@ -110,17 +110,17 @@
 
                 <div id="alert-banner" class="hidden mt-5 p-3.5 rounded-lg text-center text-sm font-bold transition-all"></div>
 
-                <div class="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-3 items-center justify-between">
-                    <button onclick="terminateSessionEarly()" class="text-xs font-bold text-secondary hover:text-primary uppercase tracking-widest flex items-center gap-1">
+                <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-4 sm:gap-3 items-center justify-between">
+                    <button onclick="terminateSessionEarly()" class="text-xs font-bold text-secondary hover:text-primary uppercase tracking-widest flex items-center justify-center sm:justify-start gap-1 w-full sm:w-auto py-2 sm:py-0">
                         <span class="material-symbols-outlined text-sm">cancel</span> Abort
                     </button>
                     
-                    <div class="flex gap-2">
-                        <button id="action-fail-continue" onclick="handleFailedCardAction(true)" class="hidden px-5 py-2 bg-primary text-white font-bold rounded text-sm hover:bg-red-800">Continue (Re-evaluate)</button>
-                        <button id="action-fail-skip" onclick="handleFailedCardAction(false)" class="hidden px-5 py-2 bg-gray-200 text-slate-700 font-bold rounded text-sm hover:bg-gray-300">Skip (Remove)</button>
+                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        <button id="action-fail-continue" onclick="handleFailedCardAction(true)" class="hidden w-full sm:w-auto px-5 py-3 sm:py-2 bg-primary text-white font-bold rounded text-sm hover:bg-red-800">Continue (Re-evaluate)</button>
+                        <button id="action-fail-skip" onclick="handleFailedCardAction(false)" class="hidden w-full sm:w-auto px-5 py-3 sm:py-2 bg-gray-200 text-slate-700 font-bold rounded text-sm hover:bg-gray-300">Skip (Remove)</button>
                         
-                        <button id="action-trigger-check" onclick="processAttemptValidation()" class="px-6 py-2 bg-primary text-white font-bold rounded hover:bg-red-800 transition-colors shadow">Verify Input</button>
-                        <button id="action-trigger-next" onclick="advanceSessionIndex()" class="hidden px-6 py-2 bg-tertiary text-white font-bold rounded hover:bg-teal-800 transition-colors shadow">Continue →</button>
+                        <button id="action-trigger-check" onclick="processAttemptValidation()" class="w-full sm:w-auto px-6 py-3 sm:py-2 bg-primary text-white font-bold rounded hover:bg-red-800 transition-colors shadow">Verify Input</button>
+                        <button id="action-trigger-next" onclick="advanceSessionIndex()" class="hidden w-full sm:w-auto px-6 py-3 sm:py-2 bg-tertiary text-white font-bold rounded hover:bg-teal-800 transition-colors shadow">Continue →</button>
                     </div>
                 </div>
             </div>
@@ -130,7 +130,7 @@
                 <h2 class="text-2xl font-extrabold mt-2 mb-1">Evaluation Assessment Concluded</h2>
                 <p class="text-sm text-secondary mb-6">Metrics generated reflect precision scores across selected datasets.</p>
 
-                <div class="grid grid-cols-2 gap-4 mb-6 max-w-sm mx-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 max-w-sm mx-auto">
                     <div class="p-4 bg-teal-50 border border-teal-200 rounded-xl">
                         <p class="text-2xl font-black text-teal-800" id="stat-correct-count">0</p>
                         <p class="text-xs font-bold uppercase text-teal-600 tracking-wider">Correct Cards</p>
@@ -141,18 +141,19 @@
                     </div>
                 </div>
 
-                <div class="flex gap-3 justify-center">
-                    <button onclick="buildEvaluationSession()" class="px-6 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-red-800">Repeat Target Selection</button>
-                    <button onclick="location.reload()" class="px-6 py-2.5 bg-gray-100 text-slate-700 font-bold rounded-lg border border-gray-200 hover:bg-gray-200">Change Settings</button>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="buildEvaluationSession()" class="w-full sm:w-auto px-6 py-3 sm:py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-red-800">Repeat Target Selection</button>
+                    <button onclick="location.reload()" class="w-full sm:w-auto px-6 py-3 sm:py-2.5 bg-gray-100 text-slate-700 font-bold rounded-lg border border-gray-200 hover:bg-gray-200">Change Settings</button>
                 </div>
             </div>
 
         </div>
-            <nav class="fixed bottom-0 w-full z-50 flex justify-around items-center bg-white border-t border-border-stable py-2 md:hidden">
-        <a class="flex flex-col items-center text-primary" href="index.html"><span class="material-symbols-outlined">home</span><span class="text-[10px] font-bold">Home</span></a>
-        <a class="flex flex-col items-center text-secondary" href="quiz.html"><span class="material-symbols-outlined">quiz</span><span class="text-[10px] font-bold">Quiz</span></a>
-        <a class="flex flex-col items-center text-secondary" href="library.html"><span class="material-symbols-outlined">local_library</span><span class="text-[10px] font-bold">Library</span></a>
-    </nav>
+        
+        <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-white border-t border-border-stable py-2 md:hidden">
+            <a class="flex flex-col items-center text-secondary" href="index.html"><span class="material-symbols-outlined">home</span><span class="text-[10px] font-bold">Home</span></a>
+            <a class="flex flex-col items-center text-primary" href="quiz.html"><span class="material-symbols-outlined">quiz</span><span class="text-[10px] font-bold">Quiz</span></a>
+            <a class="flex flex-col items-center text-secondary" href="library.html"><span class="material-symbols-outlined">local_library</span><span class="text-[10px] font-bold">Library</span></a>
+        </nav>
     </main>
 
     <script src="data-vocab.js"></script>
