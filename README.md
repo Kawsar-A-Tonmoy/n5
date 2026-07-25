@@ -49,7 +49,7 @@ This repository prioritizes building useful features over showcasing perfect sof
 
 ## Current Limitations
 
-* Content is currently limited to N5 and is still incomplete.
+* Content is currently limited to N5.
 * Some quizzes rely on straightforward answer matching.
 * Parts of the codebase would benefit from further refactoring.
 * Bugs and rough edges may still exist.
