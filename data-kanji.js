@@ -140,7 +140,16 @@ const kanjiData =[
 
 
 
-
+  { "lesson": 11, "lessonName": "Lesson 11: Kanji - Places, People & Nature", "japanese": "今", "romaji": "Ima", "meaningBangla": "এখন", "meaningEnglish": "Now" },
+  { "lesson": 11, "lessonName": "Lesson 11: Kanji - Places, People & Nature", "japanese": "会", "romaji": "Au", "meaningBangla": "দেখা করা / সাক্ষাৎ করা", "meaningEnglish": "To meet" },
+  { "lesson": 11, "lessonName": "Lesson 11: Kanji - Places, People & Nature", "japanese": "社", "romaji": "Kaisha", "meaningBangla": "কোম্পানি / প্রতিষ্ঠান", "meaningEnglish": "Company / Shrine" },
+  { "lesson": 11, "lessonName": "Lesson 11: Kanji - Places, People & Nature", "japanese": "店", "romaji": "Mise", "meaningBangla": "দোকান", "meaningEnglish": "Shop" },
+  { "lesson": 11, "lessonName": "Lesson 11: Kanji - Places, People & Nature", "japanese": "駅", "romaji": "Eki", "meaningBangla": "স্টেশন", "meaningEnglish": "Station" },
+  { "lesson": 11, "lessonName": "Lesson 11: Kanji - Places, People & Nature", "japanese": "花", "romaji": "Hana", "meaningBangla": "ফুল", "meaningEnglish": "Flower" },
+  { "lesson": 11, "lessonName": "Lesson 11: Kanji - Places, People & Nature", "japanese": "国", "romaji": "Kuni", "meaningBangla": "দেশ", "meaningEnglish": "Country" },
+  { "lesson": 11, "lessonName": "Lesson 11: Kanji - Places, People & Nature", "japanese": "白", "romaji": "Shiro", "meaningBangla": "সাদা", "meaningEnglish": "White" },
+  { "lesson": 11, "lessonName": "Lesson 11: Kanji - Places, People & Nature", "japanese": "空", "romaji": "Sora", "meaningBangla": "আকাশ", "meaningEnglish": "Sky / Empty" },
+  { "lesson": 11, "lessonName": "Lesson 11: Kanji - Places, People & Nature", "japanese": "電", "romaji": "Den", "meaningBangla": "বিদ্যুৎ", "meaningEnglish": "Electricity" }
 
 
 ]

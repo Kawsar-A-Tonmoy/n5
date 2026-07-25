@@ -5,9 +5,8 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Quiz Module</title>
     <link rel="icon" type="image/x-icon" href="ico.png"> 
-    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@500;700&family=JetBrains+Mono&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="tailwind.js"></script>
+   
     <script id="tailwind-config">
         tailwind.config = {
             theme: {
@@ -38,7 +37,7 @@
         </div>
     </header>
 
-    <main class="flex-grow flex items-center justify-center p-4 pb-20 md:pb-4">
+    <main class="flex-grow flex items-start sm:items-center justify-center p-4 pt-8 sm:pt-4 pb-32 md:pb-4 overflow-y-auto">
         <div class="w-full max-w-2xl">
             
             <div id="config-panel" class="bg-white border border-border-stable rounded-xl p-6 md:p-8 shadow-sm">
@@ -78,7 +77,7 @@
                 <div id="lesson-checkbox-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[230px] overflow-y-auto pr-2 mb-6 border-y border-gray-100 py-3"></div>
                 
                 <button onclick="buildEvaluationSession()" class="w-full bg-primary text-white py-4 font-bold rounded-lg hover:bg-red-800 transition-colors flex items-center justify-center gap-2 shadow-md">
-                    <span class="material-symbols-outlined">bolt</span> Initialize Session 
+                    <svg class="inline-block w-[1em] h-[1em] align-middle text-xl" viewBox="0 -960 960 960" fill="currentColor"><path d="m402.67-187.33 255-306H484.33L518-759.67l-230.33 333h149l-34 239.34ZM320-80l40-280H160l360-520h80l-40 320h240L400-80h-80Zm153-394Z"/></svg> Initialize Session 
                 </button>
             </div>
 
@@ -90,7 +89,7 @@
 
                 <div class="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-200 mb-6 relative">
                     <button id="audio-speak-btn" onclick="triggerVoiceSpeak()" class="absolute top-3 right-3 text-gray-300 cursor-not-allowed" disabled>
-                        <span class="material-symbols-outlined">volume_up</span>
+                        <svg class="inline-block w-[1em] h-[1em] align-middle text-xl" viewBox="0 -960 960 960" fill="currentColor"><path d="M382-306.67 653.33-480 382-653.33v346.66ZM480-80q-82.33 0-155.33-31.5-73-31.5-127.34-85.83Q143-251.67 111.5-324.67T80-480q0-83 31.5-156t85.83-127q54.34-54 127.34-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82.33-31.5 155.33-31.5 73-85.5 127.34Q709-143 636-111.5T480-80Zm0-66.67q139.33 0 236.33-97.33t97-236q0-139.33-97-236.33t-236.33-97q-138.67 0-236 97-97.33 97-97.33 236.33 0 138.67 97.33 236 97.33 97.33 236 97.33ZM480-480Z"/></svg>
                     </button>
                     <div class="inline-block text-center select-none overflow-hidden max-w-full px-2">
                         <ruby id="display-japanese-char" class="font-bold tracking-wide text-4xl sm:text-5xl md:text-6xl text-slate-800 font-jp"></ruby>
@@ -112,7 +111,7 @@
 
                 <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col-reverse sm:flex-row gap-4 sm:gap-3 items-center justify-between">
                     <button onclick="terminateSessionEarly()" class="text-xs font-bold text-secondary hover:text-primary uppercase tracking-widest flex items-center justify-center sm:justify-start gap-1 w-full sm:w-auto py-2 sm:py-0">
-                        <span class="material-symbols-outlined text-sm">cancel</span> Abort
+                        <svg class="inline-block w-[1em] h-[1em] align-middle text-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg> Abort
                     </button>
                     
                     <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
@@ -126,7 +125,7 @@
             </div>
 
             <div id="results-panel" class="hidden bg-white border border-border-stable rounded-xl p-8 shadow-sm text-center">
-                <span class="material-symbols-outlined text-6xl text-primary">military_tech</span>
+                <svg class="inline-block w-[1em] h-[1em] align-middle text-6xl text-primary mx-auto mb-2" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.43V2H7v8.43c0 2.52 1.54 4.77 3.88 5.67L10 22l2-1 2 1-.88-5.9c2.34-.9 3.88-3.15 3.88-5.67zM12 14c-1.66 0-3-1.34-3-3V4h6v7c0 1.66-1.34 3-3 3z"/></svg>
                 <h2 class="text-2xl font-extrabold mt-2 mb-1">Evaluation Assessment Concluded</h2>
                 <p class="text-sm text-secondary mb-6">Metrics generated reflect precision scores across selected datasets.</p>
 
@@ -150,9 +149,18 @@
         </div>
         
         <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-white border-t border-border-stable py-2 md:hidden">
-            <a class="flex flex-col items-center text-secondary" href="index.html"><span class="material-symbols-outlined">home</span><span class="text-[10px] font-bold">Home</span></a>
-            <a class="flex flex-col items-center text-primary" href="quiz.html"><span class="material-symbols-outlined">quiz</span><span class="text-[10px] font-bold">Quiz</span></a>
-            <a class="flex flex-col items-center text-secondary" href="library.html"><span class="material-symbols-outlined">local_library</span><span class="text-[10px] font-bold">Library</span></a>
+            <a class="flex flex-col items-center text-secondary" href="index.html">
+                <svg class="inline-block w-[1em] h-[1em] align-middle text-2xl" viewBox="0 -960 960 960" fill="currentColor"><path d="M226.67-186.67h140v-246.66h226.66v246.66h140v-380L480-756.67l-253.33 190v380ZM160-120v-480l320-240 320 240v480H526.67v-246.67h-93.34V-120H160Zm320-352Z"/></svg>
+                <span class="text-[10px] font-bold">Home</span>
+            </a>
+            <a class="flex flex-col items-center text-primary" href="quiz.html">
+                <svg class="inline-block w-[1em] h-[1em] align-middle text-2xl" viewBox="0 -960 960 960" fill="currentColor"><path d="M577.83-358.83Q590-371 590-388t-12.17-29.17q-12.16-12.16-29.16-12.16t-29.17 12.16Q507.33-405 507.33-388t12.17 29.17q12.17 12.16 29.17 12.16t29.16-12.16ZM522-473.33h51.33q1.34-29 7.67-42.84Q587.33-530 612-554q28-27.33 38.33-46.43 10.34-19.1 10.34-44.9 0-45.59-31.5-74.46-31.5-28.88-82.5-28.88-39 0-69.17 21.34Q447.33-706 434-668.67l48 20q10.33-25 26.5-37.83 16.17-12.83 38.17-12.83 27.85 0 45.26 15.83 17.4 15.83 17.4 40.83 0 18-8.66 32.17Q592-596.33 570-578.67q-32.33 29-40.17 46.17-7.83 17.17-7.83 59.17Zm-242 260q-27 0-46.83-19.84Q213.33-253 213.33-280v-533.33q0-27 19.84-46.84Q253-880 280-880h533.33q27 0 46.84 19.83Q880-840.33 880-813.33V-280q0 27-19.83 46.83-19.84 19.84-46.84 19.84H280Zm0-66.67h533.33v-533.33H280V-280ZM146.67-80q-27 0-46.84-19.83Q80-119.67 80-146.67v-600h66.67v600h600V-80h-600ZM280-813.33V-280v-533.33Z"/></svg>
+                <span class="text-[10px] font-bold">Quiz</span>
+            </a>
+            <a class="flex flex-col items-center text-secondary" href="library.html">
+               <svg class="inline-block w-[1em] h-[1em] align-middle text-2xl" viewBox="0 -960 960 960" fill="green"><path d="M480-60q-76-68.67-168.67-105.33Q218.67-202 120-202v-432.67q96.33 0 189 40.84Q401.67-553 480-478.67 558.33-553 651-593.83q92.67-40.84 189-40.84V-202q-99 0-191.5 36.67Q556-128.67 480-60Zm0-86q68.33-49.67 142.33-79.33 74-29.67 151-38V-562q-69.66 11.67-143.5 53.83Q556-466 480-392.67q-80.67-76-152.17-117.16Q256.33-551 186.67-562v298.67q77 8.33 151 38 74 29.66 142.33 79.33ZM371.33-653.33Q326-698.67 326-764t45.33-110.67Q416.67-920 482-920t110.67 45.33Q638-829.33 638-764t-45.33 110.67Q547.33-608 482-608t-110.67-45.33Zm173.84-47.5Q571.33-727 571.33-764t-26.16-63.17Q519-853.33 482-853.33t-63.17 26.16Q392.67-801 392.67-764t26.16 63.17Q445-674.67 482-674.67t63.17-26.16ZM482-764Zm-2 371.33Z"/></svg> 
+                <span class="text-[10px] font-bold">Library</span>
+            </a>
         </nav>
     </main>
 
@@ -171,13 +179,12 @@
         let isExhaustedState = false;
         let autoAdvanceTimer = null; 
 
-        // Strict text matching logic from legacy module
         function normalizeText(text) {
             if (!text) return "";
             return text.toLowerCase()
-                .replace(/['?.!~,\-]/g, '') // Strips tildes, commas, dashes, and periods
-                .replace(/\s*\(.*?\)\s*/g, '') // Strips anything inside parentheses
-                .replace(/\s+/g, ' ') // Condenses extra spaces
+                .replace(/['?.!~,\-]/g, '')
+                .replace(/\s*\(.*?\)\s*/g, '')
+                .replace(/\s+/g, ' ')
                 .trim();
         }
 
@@ -189,7 +196,6 @@
 
             const correct = normalizeText(correctAnswer);
 
-            // Check against slashed options strictly
             if (correct.includes('/')) {
                 const options = correct.split('/').map(opt => normalizeText(opt));
                 return options.some(opt => user === opt);   
@@ -351,7 +357,6 @@
             const userRomaji = document.getElementById('input-kana-romaji').value;
             const userMeaning = document.getElementById('input-native-meaning').value;
 
-            // Strict Validation Protocol
             const isRomajiValid = isMatch(userRomaji, activeCard.romaji);
             const isMeaningValid = isMatch(userMeaning, activeCard.meaningEnglish) || (activeCard.meaningBangla && isMatch(userMeaning, activeCard.meaningBangla));
 
@@ -360,7 +365,7 @@
             banner.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-amber-100', 'text-amber-800');
 
             if (isRomajiValid && isMeaningValid) {
-                banner.innerHTML = `<span class="flex justify-center items-center gap-1"><span class="material-symbols-outlined text-lg">check_circle</span> Correct! Moving forward...</span>`;
+                banner.innerHTML = `<span class="flex justify-center items-center gap-1"><svg class="inline-block w-[1em] h-[1em] align-middle text-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> Correct! Moving forward...</span>`;
                 banner.classList.add('bg-green-100', 'text-green-800');
                 document.getElementById('input-kana-romaji').className = "w-full p-3.5 bg-green-50 border border-green-300 rounded-lg text-green-900 outline-none text-md";
                 document.getElementById('input-native-meaning').className = "w-full p-3.5 bg-green-50 border border-green-300 rounded-lg text-green-900 outline-none text-md";
@@ -491,6 +496,14 @@
         });
 
         window.onload = populateConfigLayout;
+
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('focus', function() {
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            });
+        });
     </script>
 </body>
 </html>
