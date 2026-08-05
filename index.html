@@ -110,6 +110,7 @@
     <script src="data-vocab.js"></script>
     <script src="data-kanji.js"></script>
     <script src="app.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const stats = getOverallStats();
@@ -163,10 +164,14 @@
                     const div = document.createElement('div');
                     div.className = "p-3 bg-red-50 border border-red-100 rounded-lg flex justify-between items-center cursor-pointer hover:bg-red-100 transition-colors";
                     div.onclick = () => speakJapanese(w.japanese);
+                    
+                    const targetRomaji = w.romaji || w.correctAnswerRomaji || '';
+                    const targetMeaning = w.meaningEnglish || w.translationEnglish || w.meaning || '';
+                    
                     div.innerHTML = `
                         <div>
                             <p class="font-bold text-red-900 text-lg font-jp">${w.kanji || w.japanese}</p>
-                            <p class="text-xs font-mono text-secondary">${w.romaji || ''} • ${w.meaningEnglish || w.meaning || ''}</p>
+                            <p class="text-xs font-mono text-secondary">${targetRomaji} • ${targetMeaning}</p>
                         </div>
                         <div class="text-right text-xs bg-white px-2 py-1 rounded border border-red-200 font-bold text-red-700">
                             Fails: ${w.stats.incorrect}

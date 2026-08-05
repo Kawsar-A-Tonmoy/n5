@@ -69,6 +69,7 @@
                 <select id="filter-item-type" class="w-full bg-gray-50 border border-border-stable rounded-lg py-2.5 px-3 text-sm focus:border-primary focus:ring-0 outline-none">
                     <option value="vocab">Vocabulary</option>
                     <option value="kanji">Kanji</option>
+                    <option value="verb">Verb Forms (Te/Ta/Nai/Jisho)</option>
                 </select>
             </div>
             <div>
@@ -105,6 +106,7 @@
 
     <script src="data-vocab.js"></script>
     <script src="data-kanji.js"></script>
+    <script src="dict-plt.js"></script>
     <script src="app.js"></script>
     <script>
         let isFirstLoad = true; 
@@ -126,6 +128,9 @@
             if (type === 'kanji' && typeof kanjiData !== 'undefined') {
                 return kanjiData;
             }
+            if (type === 'verb' && typeof dictData !== 'undefined') {
+                return dictData;
+            }
             return typeof vocabData !== 'undefined' ? vocabData : [];
         }
 
@@ -135,12 +140,20 @@
             dropdown.innerHTML = '<option value="all">Display All Lessons</option>';
             
             const targetData = getActiveDataset();
-            const sortedLessons = [...new Set(targetData.map(v => v.lesson))].sort((a,b)=>a-b);
+            
+            const sortedLessons = [...new Set(targetData.map(v => v.lesson))].sort((a,b) => {
+                const numA = parseInt(a);
+                const numB = parseInt(b);
+                if (isNaN(numA) && isNaN(numB)) return String(a).localeCompare(String(b));
+                if (isNaN(numA)) return 1;
+                if (isNaN(numB)) return -1;
+                return numA - numB;
+            });
             
             sortedLessons.forEach(num => {
                 const opt = document.createElement('option');
                 opt.value = num;
-                opt.textContent = `Lesson ${num}`;
+                opt.textContent = isNaN(parseInt(num)) ? `Lesson ${num}` : `Lesson ${num}`;
                 dropdown.appendChild(opt);
             });
 
@@ -172,13 +185,17 @@
 
             const targetData = getActiveDataset();
             const matches = targetData.filter(v => {
+                const targetRomajiStr = (v.romaji || v.correctAnswerRomaji || '').toLowerCase();
+                const targetEnglishStr = (v.meaningEnglish || v.translationEnglish || '').toLowerCase();
+                const targetBanglaStr = (v.meaningBangla || v.translationBangla || '');
+
                 const searchStringMatches = v.japanese.includes(searchVal) || 
                                             (v.kanji && v.kanji.includes(searchVal)) || 
-                                            v.romaji.toLowerCase().includes(searchVal) || 
-                                            v.meaningEnglish.toLowerCase().includes(searchVal) ||
-                                            (v.meaningBangla && v.meaningBangla.includes(searchVal));
+                                            targetRomajiStr.includes(searchVal) || 
+                                            targetEnglishStr.includes(searchVal) ||
+                                            (targetBanglaStr && targetBanglaStr.includes(searchVal));
                 
-                const lessonFilterMatches = (searchVal !== '') || chosenChapter === 'all' || v.lesson.toString() === chosenChapter;
+                const lessonFilterMatches = (searchVal !== '') || chosenChapter === 'all' || String(v.lesson) === chosenChapter;
                 
                 return searchStringMatches && lessonFilterMatches;
             });
@@ -197,9 +214,16 @@
                 let jpContentBlock = "";
                 if (item.kanji && item.kanji !== "") {
                     jpContentBlock = `<ruby class="font-jp text-3xl font-bold tracking-wide text-primary">${item.kanji}<rt class="text-xs font-normal text-secondary tracking-normal pb-0.5 select-none">${item.japanese}</rt></ruby>`;
+                } else if (item.correctAnswerJapanese) {
+                    jpContentBlock = `<div class="font-jp text-3xl font-bold tracking-wide text-primary pt-1">${item.japanese} → <span class="text-teal-700">${item.correctAnswerJapanese}</span></div>`;
                 } else {
                     jpContentBlock = `<div class="font-jp text-3xl font-bold tracking-wide text-primary pt-3">${item.japanese}</div>`;
                 }
+
+                const displayRomaji = item.romaji || item.correctAnswerRomaji || '';
+                const displayEnglish = item.meaningEnglish || item.translationEnglish || '';
+                const displayBangla = item.meaningBangla || item.translationBangla || '';
+                const displayMeta = item.verbGroup ? `<span class="text-[10px] text-tertiary font-bold uppercase tracking-wider block mb-1">${item.verbGroup}</span>` : '';
 
                 cardElement.innerHTML = `
                     <div class="absolute top-4 right-4">${createStatusBadgeMarkup(currentStatus)}</div>
@@ -207,9 +231,10 @@
                         <div class="min-h-[56px] flex items-end mb-2">
                             ${jpContentBlock}
                         </div>
-                        <div class="font-mono text-xs text-secondary font-bold tracking-tight mb-1">${item.romaji}</div>
-                        <div class="text-base font-bold text-slate-800 leading-snug">${item.meaningEnglish}</div>
-                        <div class="text-sm text-secondary mt-0.5 font-medium">${item.meaningBangla || ''}</div>
+                        ${displayMeta}
+                        <div class="font-mono text-xs text-secondary font-bold tracking-tight mb-1">${displayRomaji}</div>
+                        <div class="text-base font-bold text-slate-800 leading-snug">${displayEnglish}</div>
+                        <div class="text-sm text-secondary mt-0.5 font-medium">${displayBangla}</div>
                     </div>
                     <div class="mt-auto pt-3 border-t border-gray-100 flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                         <span>Ch. ${item.lesson}</span>
