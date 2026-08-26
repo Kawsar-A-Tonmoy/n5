@@ -2,7 +2,7 @@
     // --- CONFIGURATION ---
     const CONFIG = {
         repo: 'Kawsar-A-Tonmoy/n5',  // Your GitHub repository[cite: 2]
-        currentVersion: 'v0.2b'       // Your current installed app version[cite: 2]
+        currentVersion: 'v0.2c'       // Your current installed app version[cite: 2]
     };
 
     // Helper to compare version tags (handles formats like v0.1X, v0.2a, v1.0.0, etc.)[cite: 2]

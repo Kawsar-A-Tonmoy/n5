@@ -58,14 +58,34 @@
                                 <input type="checkbox" id="target-include-verb" checked onchange="populateConfigLayout()" class="rounded text-primary focus:ring-0"> Verbs
                             </label>
                         </div>
+
+                        <!-- KANJI MODES PANEL (conditionally shown based on Kanji checkbox) -->
+                        <div id="kanji-options-container" class="mt-3">
+                            <label class="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Kanji Modes</label>
+                            <div class="flex flex-wrap sm:flex-nowrap gap-3 bg-gray-50 p-2.5 rounded-lg border border-gray-200 text-xs sm:text-sm">
+                                <label class="flex items-center gap-1.5 cursor-pointer font-medium">
+                                    <input type="checkbox" id="kanji-mode-kun" checked class="rounded text-primary focus:ring-0"> Kun'yomi (Single)
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer font-medium">
+                                    <input type="checkbox" id="kanji-mode-on" checked class="rounded text-primary focus:ring-0"> On'yomi (Compound)
+                                </label>
+                            </div>
+                        </div>
+
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Quiz Focus Mode</label>
-                        <select id="quiz-mode-select" class="w-full bg-gray-50 border border-border-stable rounded-lg py-2 px-3 text-sm focus:border-primary focus:ring-0 outline-none">
-                            <option value="all">Standard (All Words)</option>
-                            <option value="unmastered">Unmastered Only (Unseen + Learning)</option>
-                            <option value="troublesome">Troublesome Only (Previously Failed)</option>
-                        </select>
+                        <label class="block text-xs font-bold text-secondary mb-1 uppercase tracking-wider">Quiz Focus Modes</label>
+                        <div class="flex flex-col gap-2 bg-gray-50 p-2.5 rounded-lg border border-gray-200 text-xs sm:text-sm">
+                            <label class="flex items-center gap-2 cursor-pointer font-medium">
+                                <input type="checkbox" id="quiz-mode-standard" checked class="rounded text-primary focus:ring-0"> Standard (All Words)
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer font-medium">
+                                <input type="checkbox" id="quiz-mode-unmastered" class="rounded text-primary focus:ring-0"> Unmastered Only (Unseen + Learning)
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer font-medium">
+                                <input type="checkbox" id="quiz-mode-troublesome" class="rounded text-primary focus:ring-0"> Troublesome Only (Previously Failed)
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -161,7 +181,7 @@
                 <span class="text-[10px] font-bold">Quiz</span>
             </a>
             <a class="flex flex-col items-center text-secondary" href="library.html">
-               <svg class="inline-block w-[1em] h-[1em] align-middle text-2xl" viewBox="0 -960 960 960" fill="green"><path d="M480-60q-76-68.67-168.67-105.33Q218.67-202 120-202v-432.67q96.33 0 189 40.84Q401.67-553 480-478.67 558.33-553 651-593.83q92.67-40.84 189-40.84V-202q-99 0-191.5 36.67Q556-128.67 480-60Zm0-86q68.33-49.67 142.33-79.33 74-29.67 151-38V-562q-69.66 11.67-143.5 53.83Q556-466 480-392.67q-80.67-76-152.17-117.16Q256.33-551 186.67-562v298.67q77 8.33 151 38 74 29.66 142.33 79.33ZM371.33-653.33Q326-698.67 326-764t45.33-110.67Q416.67-920 482-920t110.67 45.33Q638-829.33 638-764t-45.33 110.67Q547.33-608 482-608t-110.67-45.33Zm173.84-47.5Q571.33-727 571.33-764t-26.16-63.17Q519-853.33 482-853.33t-63.17 26.16Q392.67-801 392.67-764t26.16 63.17Q445-674.67 482-674.67t63.17-26.16ZM482-764Zm-2 371.33Z"/></svg> 
+               <svg class="inline-block w-[1em] h-[1em] align-middle text-2xl" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-60q-76-68.67-168.67-105.33Q218.67-202 120-202v-432.67q96.33 0 189 40.84Q401.67-553 480-478.67 558.33-553 651-593.83q92.67-40.84 189-40.84V-202q-99 0-191.5 36.67Q556-128.67 480-60Zm0-86q68.33-49.67 142.33-79.33 74-29.67 151-38V-562q-69.66 11.67-143.5 53.83Q556-466 480-392.67q-80.67-76-152.17-117.16Q256.33-551 186.67-562v298.67q77 8.33 151 38 74 29.66 142.33 79.33ZM371.33-653.33Q326-698.67 326-764t45.33-110.67Q416.67-920 482-920t110.67 45.33Q638-829.33 638-764t-45.33 110.67Q547.33-608 482-608t-110.67-45.33Zm173.84-47.5Q571.33-727 571.33-764t-26.16-63.17Q519-853.33 482-853.33t-63.17 26.16Q392.67-801 392.67-764t26.16 63.17Q445-674.67 482-674.67t63.17-26.16ZM482-764Zm-2 371.33Z"/></svg> 
                 <span class="text-[10px] font-bold">Library</span>
             </a>
         </nav>
@@ -216,6 +236,16 @@
             const verbEnabled = document.getElementById('target-include-verb').checked;
             const wrapper = document.getElementById('lesson-checkbox-grid');
             
+            // Toggle Kanji Modes Panel
+            const kanjiOptionsContainer = document.getElementById('kanji-options-container');
+            if (kanjiOptionsContainer) {
+                if (kanjiEnabled) {
+                    kanjiOptionsContainer.classList.remove('hidden');
+                } else {
+                    kanjiOptionsContainer.classList.add('hidden');
+                }
+            }
+
             const vocab = typeof vocabData !== 'undefined' ? vocabData : [];
             const kanji = typeof kanjiData !== 'undefined' ? kanjiData : [];
             const verbs = typeof dictData !== 'undefined' ? dictData : [];
@@ -276,12 +306,45 @@
             if (selectedLessonSet.size === 0) return alert("Select at least one lesson block to initialize dynamic tracking.");
             
             let combinedSource = [];
+            
+            // Vocab Data
             if (document.getElementById('target-include-vocab').checked && typeof vocabData !== 'undefined') {
                 combinedSource = [...combinedSource, ...vocabData];
             }
+            
+            // Kanji Data
             if (document.getElementById('target-include-kanji').checked && typeof kanjiData !== 'undefined') {
-                combinedSource = [...combinedSource, ...kanjiData];
+                const kunEnabled = document.getElementById('kanji-mode-kun').checked;
+                const onEnabled = document.getElementById('kanji-mode-on').checked;
+                
+                if (!kunEnabled && !onEnabled) {
+                    return alert("Please select at least one Kanji Mode (Kun'yomi or On'yomi) before initializing.");
+                }
+
+                kanjiData.forEach(k => {
+                    // Push the root Kanji (Kun'yomi / Single Kanji)
+                    if (kunEnabled) {
+                        combinedSource.push(k);
+                    }
+                    
+                    // Push its examples if they exist (On'yomi / Compound Kanji)
+                    if (onEnabled && k.examples && Array.isArray(k.examples)) {
+                        k.examples.forEach(ex => {
+                            combinedSource.push({
+                                lesson: k.lesson,
+                                lessonName: k.lessonName,
+                                japanese: ex.japanese,
+                                romaji: ex.romaji,
+                                meaningBangla: ex.meaningBangla,
+                                meaningEnglish: ex.meaningEnglish,
+                                type: 'kanji-example'
+                            });
+                        });
+                    }
+                });
             }
+            
+            // Verb Data
             if (document.getElementById('target-include-verb').checked && typeof dictData !== 'undefined') {
                 combinedSource = [...combinedSource, ...dictData];
             }
@@ -289,16 +352,32 @@
             if (combinedSource.length === 0) return alert("Please select at least one dataset type.");
 
             const baseDeck = combinedSource.filter(v => selectedLessonSet.has(v.lesson));
-            const focusMode = document.getElementById('quiz-mode-select').value;
-            let finalDeck = [];
             
-            if (focusMode === 'unmastered') {
-                finalDeck = baseDeck.filter(v => getWordStatus(v.japanese) !== 'Mastered');
-            } else if (focusMode === 'troublesome') {
-                const progress = getProgress();
-                finalDeck = baseDeck.filter(v => progress[v.japanese] && progress[v.japanese].incorrect > 0);
+            const isStandardChecked = document.getElementById('quiz-mode-standard').checked;
+            const isUnmasteredChecked = document.getElementById('quiz-mode-unmastered').checked;
+            const isTroublesomeChecked = document.getElementById('quiz-mode-troublesome').checked;
+
+            if (!isStandardChecked && !isUnmasteredChecked && !isTroublesomeChecked) {
+                return alert("Please select at least one Quiz Focus Mode before initializing.");
+            }
+
+            let finalDeck = [];
+
+            if (isStandardChecked) {
+                finalDeck = [...baseDeck];
             } else {
-                finalDeck = baseDeck;
+                let matchingSet = new Set();
+                
+                if (isUnmasteredChecked) {
+                    baseDeck.filter(v => getWordStatus(v.japanese) !== 'Mastered').forEach(v => matchingSet.add(v));
+                }
+                
+                if (isTroublesomeChecked) {
+                    const progress = getProgress();
+                    baseDeck.filter(v => progress[v.japanese] && progress[v.japanese].incorrect > 0).forEach(v => matchingSet.add(v));
+                }
+                
+                finalDeck = Array.from(matchingSet);
             }
 
             if (finalDeck.length === 0) {
