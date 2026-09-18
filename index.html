@@ -180,6 +180,120 @@
                     troubleContainer.appendChild(div);
                 });
             }
+
+            // --- AD POPUP SYSTEM ---
+            async function initAdSystem() {
+                if (!navigator.onLine) return;
+
+                const today = new Date().toDateString();
+                let adData = JSON.parse(localStorage.getItem('n5_ad_views') || '{"date":"","count":0}');
+                
+                // Reset limit if it is a new day
+                if (adData.date !== today) {
+                    adData = { date: today, count: 0 };
+                }
+
+                // Check limit: only 2 times a day
+                if (adData.count >= 2) return;
+
+                try {
+                    const response = await fetch('https://kawsar-a-tonmoy.github.io/n5/ads.html');
+                    if (!response.ok) return;
+                    
+                    const htmlText = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlText, 'text/html');
+                    const ads = Array.from(doc.querySelectorAll('.ad-card')).slice(0, 3);
+
+                    if (ads.length > 0) {
+                        showAdPopup(ads);
+                        adData.count++;
+                        localStorage.setItem('n5_ad_views', JSON.stringify(adData));
+                    }
+                } catch (error) {
+                    console.log('Ad fetch failed or blocked:', error);
+                }
+            }
+
+            function showAdPopup(adElements) {
+                // Overlay background
+                const overlay = document.createElement('div');
+                overlay.className = 'fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300';
+                overlay.style.zIndex = '9999';
+
+                // Modal container
+                const modal = document.createElement('div');
+                modal.className = 'bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm relative flex flex-col aspect-[3/4] max-h-[80vh]';
+
+                // Close button (initially hidden)
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'absolute top-3 right-3 bg-black bg-opacity-50 hover:bg-opacity-80 text-white rounded-full w-8 h-8 flex items-center justify-center z-50 hidden transition-all shadow-md';
+                closeBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                closeBtn.onclick = () => overlay.remove();
+
+                // Show close button after exactly 1 second
+                setTimeout(() => closeBtn.classList.remove('hidden'), 1000);
+
+                // Carousel container
+                const carousel = document.createElement('div');
+                carousel.className = 'relative w-full h-full flex-grow overflow-hidden bg-gray-50';
+
+                // Setup slides from the fetched DOM elements
+                adElements.forEach((adNode, index) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'absolute inset-0 transition-opacity duration-700 w-full h-full ad-slide';
+                    wrapper.style.opacity = index === 0 ? '1' : '0';
+                    wrapper.style.zIndex = index === 0 ? '10' : '0';
+                    wrapper.style.pointerEvents = index === 0 ? 'auto' : 'none';
+                    
+                    wrapper.appendChild(adNode.cloneNode(true));
+                    carousel.appendChild(wrapper);
+                });
+
+                modal.appendChild(closeBtn);
+                modal.appendChild(carousel);
+
+                // Auto Carousel Setup (if more than 1 ad exists)
+                if (adElements.length > 1) {
+                    const dotsContainer = document.createElement('div');
+                    dotsContainer.className = 'absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-50 pointer-events-none';
+                    
+                    adElements.forEach((_, i) => {
+                        const dot = document.createElement('div');
+                        dot.className = 'w-2 h-2 rounded-full transition-colors duration-300 ad-dot';
+                        dot.style.backgroundColor = i === 0 ? '#b61722' : '#d1d5db'; 
+                        dotsContainer.appendChild(dot);
+                    });
+                    modal.appendChild(dotsContainer);
+
+                    let currentIndex = 0;
+                    setInterval(() => {
+                        const slides = carousel.querySelectorAll('.ad-slide');
+                        const dots = dotsContainer.querySelectorAll('.ad-dot');
+                        
+                        // Hide current slide
+                        slides[currentIndex].style.opacity = '0';
+                        slides[currentIndex].style.zIndex = '0';
+                        slides[currentIndex].style.pointerEvents = 'none';
+                        dots[currentIndex].style.backgroundColor = '#d1d5db';
+                        
+                        // Switch to next slide
+                        currentIndex = (currentIndex + 1) % slides.length;
+                        
+                        // Reveal next slide
+                        slides[currentIndex].style.opacity = '1';
+                        slides[currentIndex].style.zIndex = '10';
+                        slides[currentIndex].style.pointerEvents = 'auto';
+                        dots[currentIndex].style.backgroundColor = '#b61722';
+                    }, 4000); 
+                }
+
+                overlay.appendChild(modal);
+                document.body.appendChild(overlay);
+            }
+
+            initAdSystem();
+            // --- END AD SYSTEM ---
         });
     </script>
 </body>
