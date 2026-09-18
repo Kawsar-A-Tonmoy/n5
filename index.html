@@ -181,19 +181,17 @@
                 });
             }
 
-            // --- AD POPUP SYSTEM ---
+            // --- AD POPUP SYSTEM WITH SWIPE & TIMER ---
             async function initAdSystem() {
                 if (!navigator.onLine) return;
 
                 const today = new Date().toDateString();
                 let adData = JSON.parse(localStorage.getItem('n5_ad_views') || '{"date":"","count":0}');
                 
-                // Reset limit if it is a new day
                 if (adData.date !== today) {
                     adData = { date: today, count: 0 };
                 }
 
-                // Check limit: only 2 times a day
                 if (adData.count >= 2) return;
 
                 try {
@@ -203,10 +201,18 @@
                     const htmlText = await response.text();
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(htmlText, 'text/html');
-                    const ads = Array.from(doc.querySelectorAll('.ad-card')).slice(0, 3);
+                    
+                    const now = Date.now();
+                    
+                    // Filter out expired ads
+                    const allAds = Array.from(doc.querySelectorAll('.ad-card')).filter(ad => {
+                        const expiry = ad.getAttribute('data-expiry');
+                        if (!expiry) return true; // No expiry, keep it
+                        return new Date(expiry).getTime() > now;
+                    }).slice(0, 3);
 
-                    if (ads.length > 0) {
-                        showAdPopup(ads);
+                    if (allAds.length > 0) {
+                        showAdPopup(allAds);
                         adData.count++;
                         localStorage.setItem('n5_ad_views', JSON.stringify(adData));
                     }
@@ -216,80 +222,153 @@
             }
 
             function showAdPopup(adElements) {
-                // Overlay background
                 const overlay = document.createElement('div');
                 overlay.className = 'fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300';
                 overlay.style.zIndex = '9999';
 
-                // Modal container
                 const modal = document.createElement('div');
                 modal.className = 'bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm relative flex flex-col aspect-[3/4] max-h-[80vh]';
 
-                // Close button (initially hidden)
                 const closeBtn = document.createElement('button');
                 closeBtn.className = 'absolute top-3 right-3 bg-black bg-opacity-50 hover:bg-opacity-80 text-white rounded-full w-8 h-8 flex items-center justify-center z-50 hidden transition-all shadow-md';
                 closeBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-                closeBtn.onclick = () => overlay.remove();
+                closeBtn.onclick = () => {
+                    clearInterval(window.adTimerInterval);
+                    overlay.remove();
+                };
 
-                // Show close button after exactly 1 second
                 setTimeout(() => closeBtn.classList.remove('hidden'), 1000);
 
-                // Carousel container
                 const carousel = document.createElement('div');
-                carousel.className = 'relative w-full h-full flex-grow overflow-hidden bg-gray-50';
+                carousel.className = 'relative w-full h-full flex-grow overflow-hidden bg-gray-50 touch-pan-y';
 
-                // Setup slides from the fetched DOM elements
                 adElements.forEach((adNode, index) => {
                     const wrapper = document.createElement('div');
-                    wrapper.className = 'absolute inset-0 transition-opacity duration-700 w-full h-full ad-slide';
+                    wrapper.className = 'absolute inset-0 transition-opacity duration-500 w-full h-full ad-slide select-none';
                     wrapper.style.opacity = index === 0 ? '1' : '0';
                     wrapper.style.zIndex = index === 0 ? '10' : '0';
                     wrapper.style.pointerEvents = index === 0 ? 'auto' : 'none';
                     
+                    // Prevent image dragging to not conflict with swipe
+                    const img = adNode.querySelector('img');
+                    if(img) img.draggable = false;
+
                     wrapper.appendChild(adNode.cloneNode(true));
                     carousel.appendChild(wrapper);
                 });
 
                 modal.appendChild(closeBtn);
                 modal.appendChild(carousel);
+                overlay.appendChild(modal);
+                document.body.appendChild(overlay);
 
-                // Auto Carousel Setup (if more than 1 ad exists)
+                // --- Live Countdown Timer ---
+                function updateTimers() {
+                    const now = Date.now();
+                    document.querySelectorAll('.ad-countdown').forEach(el => {
+                        const parentCard = el.closest('.ad-card');
+                        if (!parentCard) return;
+                        
+                        const expiry = parentCard.getAttribute('data-expiry');
+                        if (!expiry) {
+                            el.style.display = 'none';
+                            return;
+                        }
+                        
+                        const distance = new Date(expiry).getTime() - now;
+                        if (distance < 0) {
+                            el.innerText = "Expired";
+                            return;
+                        }
+                        
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        
+                        let timeStr = days > 0 ? `${days}d ` : '';
+                        timeStr += `${hours}h ${minutes}m ${seconds}s`;
+                        el.innerText = `Ends in: ${timeStr}`;
+                        el.style.display = 'block';
+                    });
+                }
+                updateTimers();
+                window.adTimerInterval = setInterval(updateTimers, 1000);
+
+                // --- Carousel Navigation Logic ---
                 if (adElements.length > 1) {
                     const dotsContainer = document.createElement('div');
-                    dotsContainer.className = 'absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-50 pointer-events-none';
+                    dotsContainer.className = 'absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-50 pointer-events-auto';
                     
                     adElements.forEach((_, i) => {
                         const dot = document.createElement('div');
-                        dot.className = 'w-2 h-2 rounded-full transition-colors duration-300 ad-dot';
+                        dot.className = 'w-2 h-2 rounded-full transition-colors duration-300 ad-dot cursor-pointer shadow-sm';
                         dot.style.backgroundColor = i === 0 ? '#b61722' : '#d1d5db'; 
+                        
+                        // Clickable dots
+                        dot.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            goToSlide(i);
+                            resetAutoSlide();
+                        });
+                        
                         dotsContainer.appendChild(dot);
                     });
                     modal.appendChild(dotsContainer);
 
                     let currentIndex = 0;
-                    setInterval(() => {
+                    let autoSlideTimer;
+
+                    function goToSlide(index) {
                         const slides = carousel.querySelectorAll('.ad-slide');
                         const dots = dotsContainer.querySelectorAll('.ad-dot');
                         
-                        // Hide current slide
                         slides[currentIndex].style.opacity = '0';
                         slides[currentIndex].style.zIndex = '0';
                         slides[currentIndex].style.pointerEvents = 'none';
                         dots[currentIndex].style.backgroundColor = '#d1d5db';
                         
-                        // Switch to next slide
-                        currentIndex = (currentIndex + 1) % slides.length;
+                        currentIndex = (index + slides.length) % slides.length; // Wrap safely
                         
-                        // Reveal next slide
                         slides[currentIndex].style.opacity = '1';
                         slides[currentIndex].style.zIndex = '10';
                         slides[currentIndex].style.pointerEvents = 'auto';
                         dots[currentIndex].style.backgroundColor = '#b61722';
-                    }, 4000); 
-                }
+                    }
 
-                overlay.appendChild(modal);
-                document.body.appendChild(overlay);
+                    function nextSlide() { goToSlide(currentIndex + 1); }
+                    function prevSlide() { goToSlide(currentIndex - 1); }
+                    
+                    function resetAutoSlide() {
+                        clearInterval(autoSlideTimer);
+                        autoSlideTimer = setInterval(nextSlide, 4500);
+                    }
+                    resetAutoSlide();
+
+                    // --- Swipe gestures ---
+                    let touchStartX = 0;
+                    let touchEndX = 0;
+
+                    carousel.addEventListener('touchstart', e => {
+                        touchStartX = e.changedTouches[0].screenX;
+                    }, { passive: true });
+
+                    carousel.addEventListener('touchend', e => {
+                        touchEndX = e.changedTouches[0].screenX;
+                        handleSwipe();
+                    }, { passive: true });
+
+                    function handleSwipe() {
+                        const swipeDistance = touchEndX - touchStartX;
+                        if (swipeDistance < -40) {
+                            nextSlide();     // Swiped Left
+                            resetAutoSlide();
+                        } else if (swipeDistance > 40) {
+                            prevSlide();     // Swiped Right
+                            resetAutoSlide();
+                        }
+                    }
+                }
             }
 
             initAdSystem();
