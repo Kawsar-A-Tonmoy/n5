@@ -11,7 +11,7 @@
      CARD 1: JAPAN BOARDING PASS (App-to-Japan Pathway)
      No Expiry
      ================================================================= -->
-<a href="https://fujidreamacademy.com/" target="_blank" class="ad-card block w-full h-full bg-[#0b0f19] text-white relative flex flex-col justify-between overflow-hidden no-underline font-sans p-5 group border border-white/10">
+<a href="https://fujidreamacademy.com/" target="_blank" class="ad-card block w-full h-full bg-[#0b0f19] text-white relative flex flex-col justify-between overflow-hidden no-underline font-sans p-5 pb-10 group border border-white/10">
     <!-- Required JS timer fallback -->
     <div class="ad-countdown hidden"></div>
 
@@ -20,85 +20,77 @@
         日本語
     </div>
 
-    <!-- 1. TOP BAR (Top-Right left clear for Modal Close X Button) -->
-    <div class="flex items-center justify-start pb-3 border-b border-white/10 pr-12">
+    <!-- 1. TOP BAR (Symmetrical Header, Right side clear for X button) -->
+    <div class="flex items-center justify-between pb-2.5 border-b border-white/10 pr-10">
         <div class="flex items-center gap-2">
-            <div class="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center text-white text-xs font-bold shadow-md">日</div>
+            <div class="w-5 h-5 bg-red-600 rounded flex items-center justify-center text-white text-[11px] font-bold shadow">日</div>
+            <span class="text-[10px] font-black tracking-widest text-red-400 uppercase">Nihongo Nichi</span>
+        </div>
+        <span class="text-[9px] font-mono font-bold text-slate-400">PASS #01</span>
+    </div>
+
+    <!-- 2. FDA BRAND LOGO BAR (Identical Frame Height) -->
+    <div class="bg-white/95 p-2 rounded-xl flex items-center justify-between shadow-md h-10 my-1">
+        <img src="https://fujidreamacademy.com/wp-content/uploads/2024/09/cropped-Fuji-Logo-2.png" alt="Fuji Dream Academy" class="h-6 w-auto object-contain">
+        <span class="text-[9px] font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
+            Japan Pathway
+        </span>
+    </div>
+
+    <!-- 3. MAIN FEATURE BOX -->
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-3.5 backdrop-blur-md my-auto">
+        <!-- Route Header -->
+        <div class="flex items-center justify-between text-center mb-2.5">
+            <div class="text-left">
+                <span class="text-[8px] font-mono font-bold text-slate-400 block uppercase">ORIGIN</span>
+                <span class="text-sm font-black text-white tracking-wider">APP [N5]</span>
+            </div>
+            
+            <!-- Flight Path Arrow -->
+            <div class="flex-grow px-2 flex flex-col items-center">
+                <span class="text-[7px] font-mono text-red-400 font-bold uppercase mb-0.5">VISA PATHWAY</span>
+                <div class="w-full flex items-center gap-1">
+                    <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                    <div class="flex-grow h-[1px] border-t border-dashed border-red-500/50"></div>
+                    <svg class="w-3 h-3 text-red-400 rotate-90 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
+                </div>
+            </div>
+
+            <div class="text-right">
+                <span class="text-[8px] font-mono font-bold text-slate-400 block uppercase">DESTINATION</span>
+                <span class="text-sm font-black text-red-400 tracking-wider">JAPAN [FDA]</span>
+            </div>
+        </div>
+
+        <!-- Boarding Details Grid -->
+        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/5 text-[9px] font-mono">
             <div>
-                <p class="text-[10px] font-black tracking-widest text-red-400 uppercase leading-none">Nihongo Nichi</p>
-                <p class="text-[8px] font-medium text-slate-400 leading-tight">Official Education Partner</p>
+                <span class="text-slate-400 block text-[7px] uppercase">PROGRAM</span>
+                <span class="font-bold text-slate-200">Language School</span>
+            </div>
+            <div class="text-right">
+                <span class="text-slate-400 block text-[7px] uppercase">COUNSELING</span>
+                <span class="font-bold text-emerald-400">100% Free Guidance</span>
             </div>
         </div>
     </div>
 
-    <!-- 2. MAIN BODY (Prominent FDA Logo & Flight Route) -->
-    <div class="my-auto space-y-3">
-        <!-- Prominent Fuji Dream Academy Logo Badge -->
-        <div class="bg-white/95 backdrop-blur-md p-2.5 rounded-xl border border-white/20 shadow-lg flex items-center justify-between">
-            <img src="https://fujidreamacademy.com/wp-content/uploads/2024/09/cropped-Fuji-Logo-2.png" alt="Fuji Dream Academy" class="h-7 w-auto object-contain">
-            <span class="text-[9px] font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                Nihongo Gakkou
-            </span>
-        </div>
-
-        <!-- Route Box -->
-        <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-3.5 backdrop-blur-md">
-            <!-- Route Header -->
-            <div class="flex items-center justify-between text-center mb-2.5">
-                <div class="text-left">
-                    <span class="text-[8px] font-mono font-bold text-slate-400 block uppercase">ORIGIN</span>
-                    <span class="text-sm font-black text-white tracking-wider">APP [N5]</span>
-                </div>
-                
-                <!-- Flight Path Arrow -->
-                <div class="flex-grow px-2 flex flex-col items-center">
-                    <span class="text-[7px] font-mono text-red-400 font-bold uppercase mb-0.5">VISA PATHWAY</span>
-                    <div class="w-full flex items-center gap-1">
-                        <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
-                        <div class="flex-grow h-[1px] border-t border-dashed border-red-500/50"></div>
-                        <svg class="w-3 h-3 text-red-400 rotate-90 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
-                    </div>
-                </div>
-
-                <div class="text-right">
-                    <span class="text-[8px] font-mono font-bold text-slate-400 block uppercase">DESTINATION</span>
-                    <span class="text-sm font-black text-red-400 tracking-wider">JAPAN [FDA]</span>
-                </div>
-            </div>
-
-            <!-- Boarding Details Grid -->
-            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/5 text-[9px] font-mono">
-                <div>
-                    <span class="text-slate-400 block text-[7px] uppercase">PROGRAM</span>
-                    <span class="font-bold text-slate-200">Language School</span>
-                </div>
-                <div class="text-right">
-                    <span class="text-slate-400 block text-[7px] uppercase">COUNSELING</span>
-                    <span class="font-bold text-emerald-400">100% Free Guidance</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. TICKET STUB / CTA -->
-    <div class="relative pt-3 border-t-2 border-dashed border-white/15">
-        <!-- Ticket Notches -->
+    <!-- 4. RAISED TICKET STUB CTA -->
+    <div class="relative pt-2.5 mt-1 border-t-2 border-dashed border-white/15">
         <div class="absolute -top-3 -left-7 w-4 h-4 rounded-full bg-black"></div>
         <div class="absolute -top-3 -right-7 w-4 h-4 rounded-full bg-black"></div>
 
-        <div class="bg-red-600 group-hover:bg-red-500 text-white p-3 rounded-xl flex items-center justify-between transition-colors shadow-lg shadow-red-950/50">
+        <div class="bg-red-600 group-hover:bg-red-500 text-white p-2.5 rounded-xl flex items-center justify-between transition-colors shadow-lg shadow-red-950/50">
             <div class="flex items-center gap-2">
-                <!-- Barcode Graphic -->
-                <div class="flex gap-0.5 h-5 items-center opacity-80">
+                <div class="flex gap-0.5 h-4 items-center opacity-80">
                     <div class="w-1 h-full bg-white"></div>
                     <div class="w-0.5 h-full bg-white"></div>
                     <div class="w-1.5 h-full bg-white"></div>
                     <div class="w-0.5 h-full bg-white"></div>
-                    <div class="w-1 h-full bg-white"></div>
                 </div>
                 <div class="text-left">
                     <p class="text-[10px] font-bold leading-none">CLAIM YOUR PASS</p>
-                    <p class="text-[8px] font-mono opacity-80 mt-0.5">TAP TO VISIT SCHOOL</p>
+                    <p class="text-[7px] font-mono opacity-80 mt-0.5">TAP TO VISIT SCHOOL</p>
                 </div>
             </div>
             <span class="text-sm">→</span>
@@ -110,68 +102,69 @@
      CARD 2: APRIL INTAKE DEPARTURE BOARD (Time Limited)
      Expires November 30, 2026
      ================================================================= -->
-<a href="https://fujidreamacademy.com/" target="_blank" data-expiry="2026-11-30T23:59:59" class="ad-card block w-full h-full bg-[#0b0f19] text-white relative flex flex-col justify-between overflow-hidden no-underline font-sans p-5 group border border-white/10">
+<a href="https://fujidreamacademy.com/" target="_blank" data-expiry="2026-11-30T23:59:59" class="ad-card block w-full h-full bg-[#0b0f19] text-white relative flex flex-col justify-between overflow-hidden no-underline font-sans p-5 pb-10 group border border-white/10">
     
-    <!-- 1. AIRPORT DEPARTURE HEADER & LIVE TIMER (Right side clear for X button) -->
-    <div class="flex items-center justify-start pb-3 border-b border-white/10 pr-12">
-        <!-- Live Countdown Pill -->
-        <div class="ad-countdown text-[9px] font-mono font-extrabold text-amber-300 bg-amber-950/90 border border-amber-500/40 px-2.5 py-1 rounded-md">
-            Calculating time...
+    <!-- 1. TOP BAR (Live Countdown Badge) -->
+    <div class="flex items-center justify-between pb-2.5 border-b border-white/10 pr-10">
+        <div class="flex items-center gap-2">
+            <div class="w-5 h-5 bg-pink-600 rounded flex items-center justify-center text-white text-[11px] font-bold shadow">日</div>
+            <span class="text-[10px] font-black tracking-widest text-pink-400 uppercase">Nihongo Nichi</span>
+        </div>
+        <div class="ad-countdown text-[9px] font-mono font-extrabold text-amber-300 bg-amber-950/90 border border-amber-500/40 px-2 py-0.5 rounded">
+            Calculating...
         </div>
     </div>
 
-    <!-- 2. FLIGHT DEPARTURE BOARD -->
-    <div class="my-auto space-y-3">
-        <!-- FDA Brand Logo Bar -->
-        <div class="bg-white/95 p-2 rounded-xl flex items-center justify-between shadow-md">
-            <img src="https://fujidreamacademy.com/wp-content/uploads/2024/09/cropped-Fuji-Logo-2.png" alt="Fuji Dream Academy" class="h-6 w-auto object-contain">
-            <span class="text-[9px] font-bold text-pink-600 bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-full uppercase">
-                Admissions
-            </span>
+    <!-- 2. FDA BRAND LOGO BAR (Identical Frame Height) -->
+    <div class="bg-white/95 p-2 rounded-xl flex items-center justify-between shadow-md h-10 my-1">
+        <img src="https://fujidreamacademy.com/wp-content/uploads/2024/09/cropped-Fuji-Logo-2.png" alt="Fuji Dream Academy" class="h-6 w-auto object-contain">
+        <span class="text-[9px] font-bold text-pink-600 bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
+            April Intake
+        </span>
+    </div>
+
+    <!-- 3. MAIN FEATURE BOX -->
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-3.5 backdrop-blur-md my-auto">
+        <div class="flex items-baseline justify-between mb-2">
+            <div>
+                <span class="text-[7px] font-mono text-pink-400 font-bold uppercase tracking-widest block">SPRING SESSION</span>
+                <h3 class="text-base font-black text-white tracking-tight">APRIL INTAKE OPEN</h3>
+            </div>
+            <span class="text-[10px] font-mono font-bold text-slate-300 bg-white/10 px-2 py-0.5 rounded">2027</span>
         </div>
 
-        <div class="space-y-2">
-            <div class="flex items-baseline justify-between">
-                <div>
-                    <span class="text-[8px] font-mono text-pink-400 font-bold uppercase tracking-widest block">SPRING SESSION</span>
-                    <h3 class="text-xl font-black text-white tracking-tight">APRIL INTAKE</h3>
-                </div>
-                <span class="text-xs font-mono font-bold text-slate-300 bg-white/10 px-2 py-1 rounded">2027</span>
+        <!-- Airport Terminal Matrix -->
+        <div class="bg-black/40 border border-white/10 rounded-xl p-2.5 grid grid-cols-2 gap-y-1.5 gap-x-2 text-[8px] font-mono">
+            <div class="border-r border-white/10 pr-1">
+                <span class="text-slate-500 block text-[7px]">AGENCY</span>
+                <span class="font-bold text-slate-200">Fuji Dream</span>
             </div>
-
-            <!-- Airport Terminal Matrix -->
-            <div class="bg-black/50 border border-white/10 rounded-xl p-3 grid grid-cols-2 gap-y-2 gap-x-3 text-[9px] font-mono">
-                <div class="border-r border-white/10 pr-2">
-                    <span class="text-slate-500 block text-[7px]">ACADEMIC AGENCY</span>
-                    <span class="font-bold text-slate-200">Fuji Dream</span>
-                </div>
-                <div>
-                    <span class="text-slate-500 block text-[7px]">DOCUMENT STATUS</span>
-                    <span class="font-bold text-emerald-400">COE OPEN</span>
-                </div>
-                <div class="border-r border-white/10 pr-2 pt-1 border-t border-white/5">
-                    <span class="text-slate-500 block text-[7px]">VISA CATEGORY</span>
-                    <span class="font-bold text-slate-200">Student Visa</span>
-                </div>
-                <div class="pt-1 border-t border-white/5">
-                    <span class="text-slate-500 block text-[7px]">SEAT STATUS</span>
-                    <span class="font-bold text-pink-400">FILING FAST</span>
-                </div>
+            <div>
+                <span class="text-slate-500 block text-[7px]">DOCUMENTS</span>
+                <span class="font-bold text-emerald-400">COE OPEN</span>
+            </div>
+            <div class="border-r border-white/10 pr-1 pt-1 border-t border-white/5">
+                <span class="text-slate-500 block text-[7px]">CATEGORY</span>
+                <span class="font-bold text-slate-200">Student Visa</span>
+            </div>
+            <div class="pt-1 border-t border-white/5">
+                <span class="text-slate-500 block text-[7px]">SEAT STATUS</span>
+                <span class="font-bold text-pink-400">FILING FAST</span>
             </div>
         </div>
     </div>
 
-    <!-- 3. TICKET STUB CTA -->
-    <div class="relative pt-3 border-t-2 border-dashed border-white/15">
+    <!-- 4. RAISED TICKET STUB CTA -->
+    <div class="relative pt-2.5 mt-1 border-t-2 border-dashed border-white/15">
         <div class="absolute -top-3 -left-7 w-4 h-4 rounded-full bg-black"></div>
         <div class="absolute -top-3 -right-7 w-4 h-4 rounded-full bg-black"></div>
 
-        <div class="bg-pink-600 group-hover:bg-pink-500 text-white p-3 rounded-xl flex items-center justify-between transition-colors shadow-lg shadow-pink-950/50">
+        <div class="bg-pink-600 group-hover:bg-pink-500 text-white p-2.5 rounded-xl flex items-center justify-between transition-colors shadow-lg shadow-pink-950/50">
             <div class="text-left">
                 <p class="text-[10px] font-extrabold leading-none">APPLY BEFORE TIMER EXPIRES</p>
-                <p class="text-[8px] font-mono opacity-80 mt-0.5">SUBMIT ADMISSION DOCUMENTS →</p>
+                <p class="text-[7px] font-mono opacity-80 mt-0.5">SUBMIT ADMISSION DOCUMENTS →</p>
             </div>
-            <span class="text-xs font-mono font-bold bg-white/20 px-2 py-1 rounded">APRIL</span>
+            <span class="text-xs font-mono font-bold bg-white/20 px-2 py-0.5 rounded">APRIL</span>
         </div>
     </div>
 </a>
@@ -180,65 +173,62 @@
      CARD 3: CONSULAR VISA PERMIT (Free Counseling)
      No Expiry
      ================================================================= -->
-<a href="https://fujidreamacademy.com/contact/" target="_blank" class="ad-card block w-full h-full bg-[#0b0f19] text-white relative flex flex-col justify-between overflow-hidden no-underline font-sans p-5 group border border-white/10">
+<a href="https://fujidreamacademy.com/contact/" target="_blank" class="ad-card block w-full h-full bg-[#0b0f19] text-white relative flex flex-col justify-between overflow-hidden no-underline font-sans p-5 pb-10 group border border-white/10">
     <!-- Required JS timer fallback -->
     <div class="ad-countdown hidden"></div>
 
-    <!-- 1. CONSULAR HEADER (Right side clear for X button) -->
-    <div class="flex items-center justify-start pb-3 border-b border-white/10 pr-12">
+    <!-- 1. TOP BAR -->
+    <div class="flex items-center justify-between pb-2.5 border-b border-white/10 pr-10">
         <div class="flex items-center gap-2">
-            <div class="w-5 h-5 rounded-full bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-300 text-xs">
-                🛂
-            </div>
-            <span class="text-[10px] font-mono font-bold text-sky-300 uppercase tracking-wider">VISA ADVISORY PASS</span>
+            <div class="w-5 h-5 bg-sky-600 rounded flex items-center justify-center text-white text-[11px] font-bold shadow">日</div>
+            <span class="text-[10px] font-black tracking-widest text-sky-400 uppercase">Nihongo Nichi</span>
         </div>
+        <span class="text-[9px] font-mono font-bold text-slate-400">PASS #03</span>
     </div>
 
-    <!-- 2. VISA STAMP & SERVICE DETAIL -->
-    <div class="my-auto space-y-3">
-        <!-- FDA Brand Logo Bar -->
-        <div class="bg-white/95 p-2 rounded-xl flex items-center justify-between shadow-md">
-            <img src="https://fujidreamacademy.com/wp-content/uploads/2024/09/cropped-Fuji-Logo-2.png" alt="Fuji Dream Academy" class="h-6 w-auto object-contain">
-            <span class="text-[9px] font-mono text-emerald-700 font-bold bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
-                FEE: $0.00
+    <!-- 2. FDA BRAND LOGO BAR (Identical Frame Height) -->
+    <div class="bg-white/95 p-2 rounded-xl flex items-center justify-between shadow-md h-10 my-1">
+        <img src="https://fujidreamacademy.com/wp-content/uploads/2024/09/cropped-Fuji-Logo-2.png" alt="Fuji Dream Academy" class="h-6 w-auto object-contain">
+        <span class="text-[9px] font-mono text-emerald-700 font-bold bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
+            FEE: $0.00
+        </span>
+    </div>
+
+    <!-- 3. MAIN FEATURE BOX -->
+    <div class="relative bg-gradient-to-br from-sky-950/40 to-slate-900 border border-sky-500/20 rounded-2xl p-3.5 backdrop-blur-md my-auto">
+        <!-- Decorative Stamp -->
+        <div class="absolute right-2 top-2 w-11 h-11 border-2 border-dashed border-sky-400/30 rounded-full flex flex-col items-center justify-center text-sky-400/40 rotate-12 pointer-events-none">
+            <span class="text-[5px] font-mono font-bold">APPROVED</span>
+            <span class="text-[7px] font-bold">1-ON-1</span>
+        </div>
+
+        <span class="text-[7px] font-mono text-slate-400 font-bold block mb-0.5">VISA ADVISORY PASS</span>
+        <h3 class="text-sm font-black text-white leading-snug mb-1">Confused About Japan Visa?</h3>
+        <p class="text-[10px] text-slate-300 leading-relaxed pr-6">
+            Get 1-on-1 guidance on COE documents, bank statements & school selection.
+        </p>
+
+        <div class="mt-2 flex items-center gap-1.5">
+            <span class="text-[7px] font-mono text-sky-300 bg-sky-950 border border-sky-800/60 px-1.5 py-0.5 rounded">
+                ✓ COE Checks
+            </span>
+            <span class="text-[7px] font-mono text-sky-300 bg-sky-950 border border-sky-800/60 px-1.5 py-0.5 rounded">
+                ✓ Visa Guidance
             </span>
         </div>
-
-        <div class="relative bg-gradient-to-br from-sky-950/40 to-slate-900 border border-sky-500/20 rounded-2xl p-3.5">
-            <!-- Decorative Official Stamp Seal -->
-            <div class="absolute right-2 top-2 w-12 h-12 border-2 border-dashed border-sky-400/30 rounded-full flex flex-col items-center justify-center text-sky-400/40 rotate-12 pointer-events-none">
-                <span class="text-[6px] font-mono font-bold">APPROVED</span>
-                <span class="text-[8px] font-bold">1-ON-1</span>
-            </div>
-
-            <span class="text-[8px] font-mono text-slate-400 font-bold block mb-1">STUDENT COUNSELING PASS</span>
-            <h3 class="text-lg font-black text-white leading-tight mb-1.5">Confused About Japan Visa Process?</h3>
-            <p class="text-[11px] text-slate-300 leading-relaxed pr-6">
-                Get full guidance on Certificate of Eligibility (COE), bank statements, and school selection.
-            </p>
-
-            <div class="mt-2.5 flex items-center gap-2">
-                <span class="text-[8px] font-mono text-sky-300 bg-sky-950 border border-sky-800/60 px-2 py-0.5 rounded">
-                    ✓ COE Checks
-                </span>
-                <span class="text-[8px] font-mono text-sky-300 bg-sky-950 border border-sky-800/60 px-2 py-0.5 rounded">
-                    ✓ Visa Interview
-                </span>
-            </div>
-        </div>
     </div>
 
-    <!-- 3. TICKET STUB CTA -->
-    <div class="relative pt-3 border-t-2 border-dashed border-white/15">
+    <!-- 4. RAISED TICKET STUB CTA -->
+    <div class="relative pt-2.5 mt-1 border-t-2 border-dashed border-white/15">
         <div class="absolute -top-3 -left-7 w-4 h-4 rounded-full bg-black"></div>
         <div class="absolute -top-3 -right-7 w-4 h-4 rounded-full bg-black"></div>
 
-        <div class="bg-sky-600 group-hover:bg-sky-500 text-white p-3 rounded-xl flex items-center justify-between transition-colors shadow-lg shadow-sky-950/50">
+        <div class="bg-sky-600 group-hover:bg-sky-500 text-white p-2.5 rounded-xl flex items-center justify-between transition-colors shadow-lg shadow-sky-950/50">
             <div class="text-left">
                 <p class="text-[10px] font-extrabold leading-none">BOOK FREE COUNSELING</p>
-                <p class="text-[8px] font-mono opacity-80 mt-0.5">SCHEDULE WITH EXPERTS →</p>
+                <p class="text-[7px] font-mono opacity-80 mt-0.5">SCHEDULE WITH EXPERTS →</p>
             </div>
-            <span class="text-sm">📅</span>
+            <span class="text-xs">📅</span>
         </div>
     </div>
 </a>
