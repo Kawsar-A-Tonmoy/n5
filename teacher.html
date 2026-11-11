@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Teacher Portal - Student Roster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { "border-stable": "#E5E7EB", "primary": "#b61722", "secondary": "#555f6f", "tertiary": "#006765", "background": "#f9f9ff", "on-surface": "#151c27" } } }
+        }
+    </script>
+<style>.ico{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}</style>
+</head>
+<body class="bg-background text-on-surface font-sans p-4 md:p-8 relative min-h-screen">
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></symbol>
+<symbol id="i-quiz" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.25c-.75.4-1.1.9-1.1 1.75"/><path d="M12 17h.01"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10.5 5.3 8.5 4.5 6 4.5H3v13h3c2.5 0 4.5.8 6 2 1.5-1.2 3.5-2 6-2h3v-13h-3c-2.5 0-4.5.8-6 2z"/><path d="M12 6.5v13"/></symbol>
+<symbol id="i-kanji" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M12 3.5v17M3.5 12h17"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2.5 4.5 13.5H11L10 21.5l8.5-11H12.5z"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4 2.6 17.5a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 17h.01"/></symbol>
+<symbol id="i-alert-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5M12 16h.01"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 4.5-9 4.5-9-4.5z"/><path d="m3 12 9 4.5 9-4.5"/><path d="m3 16.5 9 4.5 9-4.5"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-3.6 3.6-6 8-6s8 2.4 8 6"/></symbol>
+<symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.3 2.4 2.4 4.6-4.9"/></symbol>
+<symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.6-4.6"/></symbol>
+<symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5l4.5 4v-13l-4.5 4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5v1.5A3 3 0 0 0 8 10.5M16 6h3v1.5a3 3 0 0 1-3 3M12 13v4M9 20h6M10 17h4"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+</svg>
+
+
+    <!-- Login Modal Overlay -->
+    <div id="login-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border border-border-stable">
+            <div class="text-center mb-8"><div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-2xl font-black mx-auto mb-3">日</div>
+                <h2 class="text-2xl font-extrabold text-slate-800">Teacher Login</h2>
+                <p class="text-sm text-secondary mt-1">Authenticate to view student roster</p>
+            </div>
+            <input type="text" id="t-user" placeholder="Username" class="w-full mb-4 p-3.5 bg-slate-50 border border-border-stable rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition" />
+            <input type="password" id="t-pass" placeholder="Password" class="w-full mb-6 p-3.5 bg-slate-50 border border-border-stable rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition" />
+            <button onclick="attemptLogin()" class="w-full bg-primary hover:bg-red-800 text-white p-3.5 rounded-xl font-bold transition shadow-sm">Access Portal</button>
+            <p id="login-error" class="text-red-600 text-sm mt-4 text-center hidden font-medium"></p>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Content (Hidden Until Authenticated) -->
+    <main id="main-content" class="max-w-[1024px] mx-auto space-y-6 hidden">
+        <header class="bg-gradient-to-r from-red-900 to-primary text-white relative overflow-hidden p-6 sm:p-8 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="relative z-10">
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Teacher Portal</h1>
+                <p class="text-red-100 text-sm mt-1">Click any student row to expand and inspect their full progress details.</p>
+            </div>
+            <div class="absolute -right-4 -bottom-8 opacity-[0.15] text-8xl font-black select-none pointer-events-none">日本語</div>
+            <div class="flex items-center gap-3 relative z-10">
+                <button onclick="logout()" class="text-sm font-bold text-red-100 hover:text-white transition">Logout</button>
+                <span id="student-count" class="bg-white/20 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full">Loading roster...</span>
+            </div>
+        </header>
+
+        <!-- Filtering & Tabs -->
+        <div class="bg-white p-4 rounded-2xl border border-border-stable flex flex-col sm:flex-row justify-between items-center gap-4 shadow-sm">
+            <div class="flex bg-slate-100 p-1 rounded-lg w-full sm:w-auto">
+                <button id="tab-enrolled" onclick="switchTab('Enrolled')" class="flex-1 sm:flex-none px-5 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm transition">Enrolled</button>
+                <button id="tab-passed" onclick="switchTab('Passed')" class="flex-1 sm:flex-none px-5 py-2 text-sm font-bold rounded-md text-secondary hover:text-slate-800 transition">Passed</button>
+            </div>
+            
+            <div class="w-full sm:w-auto flex items-center gap-2">
+                <label class="text-xs font-bold text-secondary uppercase">Batch:</label>
+                <select id="batch-filter" onchange="renderRoster()" class="p-2 border border-border-stable rounded-lg font-medium text-sm text-slate-800 bg-slate-50 focus:outline-none focus:border-primary w-full sm:w-48">
+                    <option value="all">All Batches</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="loading-screen" class="text-center py-20 hidden">
+            <div class="animate-spin inline-block w-10 h-10 border-[4px] border-current border-t-transparent text-primary rounded-full mb-4"></div>
+            <h2 class="text-xl font-bold text-slate-800">Fetching Roster...</h2>
+        </div>
+
+        <div id="roster-container" class="space-y-4">
+            <!-- Populated via JavaScript -->
+        </div>
+    </main>
+
+    <script>
+        // Replace with your current deployment URL
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_7dD4vKmBBDYbCMy7ZEtzq5Kw96HKHiYmEubKsTXxuSf4Qk9zMT8BL86WorrN0gWY/exec";
+        
+        // Fetch that turns "got an HTML page instead of JSON" and hangs into readable errors.
+        async function fetchJson(url, options) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 45000);
+            try {
+                const res = await fetch(url, { ...options, signal: controller.signal });
+                const text = await res.text();
+                try {
+                    return JSON.parse(text);
+                } catch (parseErr) {
+                    throw new Error(`The server sent back a web page instead of data (HTTP ${res.status}). ` +
+                        `The Apps Script URL is probably outdated, or the deployment isn't set to "Anyone" can access. ` +
+                        `Open SCRIPT_URL in a browser tab to check.`);
+                }
+            } catch (err) {
+                if (err.name === 'AbortError') throw new Error('The server took too long to respond. Please try again.');
+                throw err;
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        let allStudents = [];
+        let currentTab = 'Enrolled';
+        let credentials = { u: '', p: '' };
+
+        async function attemptLogin() {
+            const u = document.getElementById('t-user').value.trim();
+            const p = document.getElementById('t-pass').value.trim();
+            const errEl = document.getElementById('login-error');
+
+            if (!u || !p) {
+                errEl.textContent = "Please enter both username and password.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            errEl.classList.add('hidden');
+            credentials = { u, p };
+
+            // Show loading layout
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            document.getElementById('loading-screen').classList.remove('hidden');
+            document.getElementById('roster-container').classList.add('hidden');
+
+            try {
+                const json = await fetchJson(`${SCRIPT_URL}?action=get_all_users&u=${encodeURIComponent(u)}&p=${encodeURIComponent(p)}`);
+
+                if (json.success) {
+                    allStudents = json.data;
+                    populateBatchFilter();
+                    renderRoster();
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('roster-container').classList.remove('hidden');
+                } else {
+                    throw new Error(json.message || "Invalid credentials");
+                }
+            } catch (err) {
+                // Reset UI on failure
+                document.getElementById('main-content').classList.add('hidden');
+                document.getElementById('login-modal').classList.remove('hidden');
+                errEl.textContent = err.message;
+                errEl.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            credentials = { u: '', p: '' };
+            allStudents = [];
+            document.getElementById('t-user').value = '';
+            document.getElementById('t-pass').value = '';
+            document.getElementById('main-content').classList.add('hidden');
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+
+        function populateBatchFilter() {
+            const filter = document.getElementById('batch-filter');
+            filter.innerHTML = '<option value="all">All Batches</option>';
+            const batches = [...new Set(allStudents.map(s => s.batch || "N/A"))].sort();
+            batches.forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b;
+                opt.textContent = b;
+                filter.appendChild(opt);
+            });
+        }
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Style Tabs
+            const tabE = document.getElementById('tab-enrolled');
+            const tabP = document.getElementById('tab-passed');
+            
+            if (tabName === 'Enrolled') {
+                tabE.className = "flex-1 sm:flex-none px-5 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm transition";
+                tabP.className = "flex-1 sm:flex-none px-5 py-2 text-sm font-bold rounded-md text-secondary hover:text-slate-800 transition";
+            } else {
+                tabP.className = "flex-1 sm:flex-none px-5 py-2 text-sm font-bold rounded-md bg-white text-tertiary shadow-sm transition";
+                tabE.className = "flex-1 sm:flex-none px-5 py-2 text-sm font-bold rounded-md text-secondary hover:text-slate-800 transition";
+            }
+            
+            renderRoster();
+        }
+
+        function renderRoster() {
+            const container = document.getElementById('roster-container');
+            const selectedBatch = document.getElementById('batch-filter').value;
+            container.innerHTML = '';
+
+            // Filter students by tab (status) and batch
+            const filtered = allStudents.filter(s => {
+                const matchesTab = (s.status === currentTab) || (currentTab === 'Enrolled' && s.status !== 'Passed');
+                const matchesBatch = selectedBatch === 'all' || (s.batch || 'N/A') === selectedBatch;
+                return matchesTab && matchesBatch;
+            });
+
+            document.getElementById('student-count').textContent = `${filtered.length} ${currentTab} Students`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="bg-white p-8 text-center rounded-xl border border-border-stable text-secondary shadow-sm">No students found matching this criteria.</div>`;
+                return;
+            }
+
+            filtered.forEach((student, index) => {
+                container.appendChild(createStudentCard(student, index));
+            });
+        }
+
+        async function passStudent(email, index) {
+            const btn = document.getElementById(`pass-btn-${index}`);
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Processing...';
+            btn.disabled = true;
+
+            try {
+                const payload = {
+                    action: "pass_student",
+                    u: credentials.u,
+                    p: credentials.p,
+                    email: email
+                };
+
+                const json = await fetchJson(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify(payload)
+                });
+
+                if (json.success) {
+                    // Update local state and re-render
+                    const studentIndex = allStudents.findIndex(s => s.email === email);
+                    if (studentIndex > -1) {
+                        allStudents[studentIndex].status = "Passed";
+                        renderRoster();
+                    }
+                } else {
+                    alert("Error: " + json.message);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                alert("Network error while updating status.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // ---------- Rendering helpers (mirror the student dashboard in index.html) ----------
+        const ORDER = ['vocab', 'kanji', 'verb'];
+        const META = {
+            vocab: { name: 'Vocabulary', icon: 'i-book', tone: 'text-primary', badge: 'bg-red-50 text-red-700 border border-red-100' },
+            kanji: { name: 'Kanji', icon: 'i-kanji', tone: 'text-tertiary', badge: 'bg-teal-50 text-teal-700 border border-teal-100' },
+            verb:  { name: 'Verbs', icon: 'i-zap', tone: 'text-amber-600', badge: 'bg-amber-50 text-amber-700 border border-amber-100' }
+        };
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const ico = (id, cls = 'w-4 h-4') => `<svg class="ico ${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
+        const num = v => Number(v) || 0;
+        const pctOf = (n, total) => Math.round(n / (total || 1) * 100);
+
+        // Blue = learning + mastered, green (on top) = mastered. Same bar as index.html.
+        const bar = (m, l, total, h) => {
+            const t = total || 1;
+            const mp = Math.min(100, Math.round(m / t * 100));
+            const lp = Math.min(100, Math.round((l + m) / t * 100));
+            return `<div class="w-full bg-slate-100 rounded-full ${h} relative overflow-hidden">
+                <div class="bg-blue-500 h-full absolute top-0 left-0 rounded-full" style="width: ${lp}%"></div>
+                <div class="bg-emerald-500 h-full absolute top-0 left-0 rounded-full" style="width: ${mp}%"></div>
+            </div>`;
+        };
+
+        // Render Vocab / Kanji / Word display supporting both original format and new N4 format (with single/multiple kanji and romaji)
+        function renderVocabDisplayHtml(item) {
+            const hiragana = item.japanese || item.word || '';
+            const hiraganaRomaji = item.romaji || item.correctAnswerRomaji || '';
+            const meaningEng = item.meaningEnglish || item.translationEnglish || item.meaning || '';
+            const meaningBan = item.meaningBangla || item.translationBangla || '';
+
+            let kanjiEntries = [];
+            if (Array.isArray(item.kanjis)) {
+                kanjiEntries = item.kanjis.map(k => typeof k === 'object' ? k : { kanji: k, romaji: item.kanjiRomaji || '' });
+            } else if (Array.isArray(item.kanji)) {
+                kanjiEntries = item.kanji.map(k => typeof k === 'object' ? k : { kanji: k, romaji: item.kanjiRomaji || '' });
+            } else if (item.kanji) {
+                const kanjis = String(item.kanji).split(/[,，]/).map(s => s.trim()).filter(Boolean);
+                const romajis = item.kanjiRomaji ? String(item.kanjiRomaji).split(/[,，]/).map(s => s.trim()) : [];
+                kanjis.forEach((k, idx) => {
+                    kanjiEntries.push({ kanji: k, romaji: romajis[idx] || romajis[0] || '' });
+                });
+            }
+
+            let kanjiHtml = '';
+            if (kanjiEntries.length > 0) {
+                kanjiHtml = `<div class="mt-2 space-y-1 border-t border-slate-100 pt-2">` +
+                    kanjiEntries.map(entry => `
+                        <div class="flex items-baseline gap-2">
+                            <span class="font-bold text-slate-800 text-base">${esc(entry.kanji)}</span>
+                            ${entry.romaji ? `<span class="text-xs font-mono text-secondary">(${esc(entry.romaji)})</span>` : ''}
+                        </div>
+                    `).join('') +
+                    `</div>`;
+            }
+
+            return `
+                <div class="vocab-display-card space-y-1">
+                    <div class="text-2xl font-black text-red-600">${esc(hiragana)}</div>
+                    ${hiraganaRomaji ? `<div class="text-xs font-mono text-secondary">${esc(hiraganaRomaji)}</div>` : ''}
+                    ${kanjiHtml}
+                    <div class="mt-2 text-xs space-y-0.5 border-t border-slate-100 pt-2">
+                        ${meaningEng ? `<p class="text-slate-700 font-medium"><strong>Eng:</strong> ${esc(meaningEng)}</p>` : ''}
+                        ${meaningBan ? `<p class="text-slate-700 font-medium"><strong>বাংলা:</strong> ${esc(meaningBan)}</p>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function createStudentCard(userData, index) {
+            const card = document.createElement('div');
+            card.className = "bg-white border border-border-stable rounded-2xl shadow-sm overflow-hidden transition-all";
+
+            const parsed = userData.breakdown || {};
+            const stats = parsed.overallStats || {};
+            const overall = stats.overall || {};
+            const total = num(overall.total);
+            const mastered = num(overall.mastered);
+            const learning = num(overall.learning);
+            const lessons = Array.isArray(parsed.lessonBreakdown) ? parsed.lessonBreakdown : [];
+            const troubleWords = Array.isArray(parsed.troublesomeWords) ? parsed.troublesomeWords : [];
+            const troubleCount = typeof parsed.troubleCount === 'number' ? parsed.troubleCount : troubleWords.length;
+            const lastUpdated = parsed.lastUpdated ? new Date(parsed.lastUpdated).toLocaleString() : 'Never synced';
+            const catPct = k => num(stats[k] && stats[k].percentage);
+
+            // Only show pass button on Enrolled tab
+            const passActionHtml = currentTab === 'Enrolled' ? `
+                <div class="pt-4 border-t border-border-stable flex justify-end">
+                    <button id="pass-btn-${index}" data-email="${esc(userData.email)}" onclick="passStudent(this.dataset.email, ${index})" class="bg-tertiary hover:bg-teal-800 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-sm transition flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Mark as Passed
+                    </button>
+                </div>
+            ` : '';
+
+            card.innerHTML = `
+                <div class="p-5 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer hover:bg-slate-50 gap-4" onclick="toggleAccordion(${index})">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-red-50 border border-red-200 flex items-center justify-center text-primary font-bold text-xl uppercase">
+                            ${esc((userData.name || "S")[0])}
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800">${esc(userData.name || "Unnamed Student")}</h2>
+                            <p class="text-secondary text-xs font-medium">${esc(userData.email)} • Batch: ${esc(userData.batch || "N/A")}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-secondary">Mastered: <span class="text-emerald-600">${mastered}</span> • Learning: <span class="text-blue-600">${learning}</span></span>
+                            <p class="text-[11px] text-slate-400">Vocab: ${catPct('vocab')}% | Kanji: ${catPct('kanji')}% | Verbs: ${catPct('verb')}%</p>
+                        </div>
+                        <span id="icon-${index}" class="text-secondary transform transition-transform">${ico('i-chevron', 'w-5 h-5')}</span>
+                    </div>
+                </div>
+
+                <div id="details-${index}" class="hidden border-t border-border-stable p-6 bg-slate-50 space-y-8">
+                    <div class="text-xs text-secondary border-b border-gray-200 pb-2">
+                        Last Synced: <strong class="text-slate-700">${esc(lastUpdated)}</strong>
+                    </div>
+
+                    <!-- Summary tiles -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-white p-4 rounded-2xl border border-border-stable shadow-sm space-y-1">
+                            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold">
+                                <span>PROGRESS</span>
+                                <span class="text-emerald-600 font-bold">${pctOf(mastered, total)}%</span>
+                            </div>
+                            <p class="text-2xl font-black text-slate-800">${mastered}</p>
+                            <p class="text-xs text-emerald-600 font-bold">● Mastered</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-border-stable shadow-sm space-y-1">
+                            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold">
+                                <span>IN PROGRESS</span>
+                                <span class="text-blue-600 font-bold">${pctOf(learning, total)}%</span>
+                            </div>
+                            <p class="text-2xl font-black text-blue-600">${learning}</p>
+                            <p class="text-xs text-slate-400">Words currently learning</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-border-stable shadow-sm space-y-1">
+                            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold">
+                                <span>NEEDS REVIEW</span>
+                                ${ico('i-alert', 'w-4 h-4 text-red-500')}
+                            </div>
+                            <p class="text-2xl font-black text-red-600">${troubleCount}</p>
+                            <p class="text-xs text-slate-400">Troublesome words</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-border-stable shadow-sm space-y-1">
+                            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold">
+                                <span>TOTAL ITEMS</span>
+                                ${ico('i-layers', 'w-4 h-4 text-slate-400')}
+                            </div>
+                            <p class="text-2xl font-black text-slate-800">${total}</p>
+                            <p class="text-xs text-slate-400">Vocab, Kanji &amp; Verbs</p>
+                        </div>
+                    </div>
+
+                    <!-- Learning categories -->
+                    <section class="space-y-3">
+                        <h3 class="text-base font-bold text-slate-800">Learning Categories</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">${renderCategoryCards(stats)}</div>
+                    </section>
+
+                    <!-- Lesson progress -->
+                    <section class="space-y-3">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <h3 class="text-base font-bold text-slate-800">Lesson Progress</h3>
+                            <div class="flex gap-1 bg-slate-100 p-1 rounded-lg" id="lesson-filters-${index}">
+                                ${renderLessonFilterButtons(index)}
+                            </div>
+                        </div>
+                        ${renderLessonNotice(lessons)}
+                        <div id="lessons-${index}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">${renderLessonCards(lessons)}</div>
+                        <p id="lessons-empty-${index}" class="hidden text-center py-6 text-slate-400 text-sm">No lessons found for this category.</p>
+                    </section>
+
+                    <!-- Troublesome words -->
+                    <section class="space-y-3">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800">Troublesome Words</h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Highest fail frequency words${troubleCount > troubleWords.length ? ` (top ${troubleWords.length} of ${troubleCount})` : ''}.</p>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[320px] overflow-y-auto pr-1">
+                            ${renderTroubleList(troubleWords)}
+                        </div>
+                    </section>
+
+                    ${passActionHtml}
+                </div>
+            `;
+            return card;
+        }
+
+        function renderCategoryCards(stats) {
+            return ORDER.map(k => {
+                const c = stats[k] || {}, m = META[k];
+                const ct = num(c.total), cm = num(c.mastered), cl = num(c.learning);
+                return `<div class="bg-white p-5 rounded-2xl border border-border-stable shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            ${ico(m.icon, 'w-6 h-6 ' + m.tone)}
+                            <h4 class="font-bold text-slate-800">${m.name}</h4>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-400">${ct} items</span>
+                    </div>
+                    <div class="space-y-1">
+                        ${bar(cm, cl, ct, 'h-2.5')}
+                        <div class="flex justify-between items-center text-xs pt-1">
+                            <span class="text-emerald-700 font-bold">${cm} Mastered</span>
+                            <span class="text-blue-600 font-semibold">${cl} Learning</span>
+                            <span class="text-slate-400">${Math.max(0, ct - cm - cl)} Remaining</span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderLessonFilterButtons(index) {
+            const opts = [['all', 'All'], ['vocab', 'Vocab'], ['kanji', 'Kanji'], ['verb', 'Verbs']];
+            return opts.map(([val, label]) =>
+                `<button onclick="filterLessons(${index}, '${val}', this)" class="lesson-filter-btn px-3 py-1 text-xs font-bold rounded-md transition ${val === 'all' ? 'bg-white text-primary shadow-sm' : 'text-secondary hover:text-slate-800'}">${label}</button>`
+            ).join('');
+        }
+
+        // Students who haven't opened the updated app yet only have mastered/total per lesson.
+        function renderLessonNotice(lessons) {
+            if (!lessons.length || lessons.every(l => typeof l.learning === 'number')) return '';
+            return `<p class="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                This student hasn't synced since the update, so per-lesson learning counts are missing. They fill in the next time the student opens the app.</p>`;
+        }
+
+        function renderLessonCards(lessons) {
+            if (!lessons.length) return `<div class="col-span-full text-center py-6 text-slate-400 text-sm">No lesson data recorded yet.</div>`;
+            return lessons.map(l => {
+                const t = ORDER.includes(l.type) ? l.type : 'vocab';
+                const lt = num(l.total), lm = num(l.mastered);
+                const hasLearning = typeof l.learning === 'number';
+                const ll = hasLearning ? l.learning : 0;
+                const label = l.name || (isNaN(parseInt(l.id)) ? l.id : `Lesson ${l.id}`);
+                return `
+                    <div data-type="${t}" class="bg-white p-4 rounded-xl border border-border-stable shadow-sm flex flex-col justify-between space-y-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${META[t].badge}">${t}</span>
+                                <span class="text-xs font-medium text-slate-400">${lt} Items</span>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm leading-snug">${esc(label)}</h4>
+                        </div>
+                        <div class="space-y-1.5">
+                            ${bar(lm, ll, lt, 'h-2')}
+                            <div class="flex justify-between items-center text-[11px]">
+                                <span class="text-emerald-700 font-bold">${lm} Mastered</span>
+                                <span class="text-blue-600 font-medium">${hasLearning ? ll + ' Learning' : '— Learning'}</span>
+                                <span class="text-slate-400">${Math.max(0, lt - lm - ll)} Left</span>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function renderTroubleList(troubleWords) {
+            if (!troubleWords.length) return `<div class="col-span-full bg-white border border-border-stable rounded-xl text-center py-6 text-slate-400 text-sm">No troublesome words logged!</div>`;
+            return troubleWords.map(w => {
+                const vocabContent = (w.type === 'vocab' || w.kanji || (w.japanese && w.meaningBangla)) ? 
+                    renderVocabDisplayHtml(w) : `
+                        <p class="font-bold text-red-900 text-lg">${esc(w.kanji || w.japanese)}</p>
+                        <p class="text-xs font-mono text-secondary truncate">${esc(w.romaji || w.correctAnswerRomaji)} • ${esc(w.meaningEnglish || w.translationEnglish || w.meaning)}</p>
+                    `;
+                return `
+                    <div class="p-3 bg-red-50 border border-red-100 rounded-xl flex justify-between items-center gap-3">
+                        <div class="min-w-0 flex-1">
+                            ${vocabContent}
+                        </div>
+                        <span class="shrink-0 text-xs bg-white px-2 py-1 rounded border border-red-200 font-bold text-red-700">Fails: ${w.stats ? num(w.stats.incorrect) : 0}</span>
+                    </div>`;
+            }).join('');
+        }
+
+        function filterLessons(index, type, btn) {
+            const grid = document.getElementById(`lessons-${index}`);
+            let visible = 0;
+            grid.querySelectorAll('[data-type]').forEach(el => {
+                const show = type === 'all' || el.dataset.type === type;
+                el.classList.toggle('hidden', !show);
+                if (show) visible++;
+            });
+            document.getElementById(`lessons-empty-${index}`).classList.toggle('hidden', visible > 0 || !grid.querySelector('[data-type]'));
+            document.querySelectorAll(`#lesson-filters-${index} .lesson-filter-btn`).forEach(b => {
+                const active = b === btn;
+                b.classList.toggle('bg-white', active);
+                b.classList.toggle('text-primary', active);
+                b.classList.toggle('shadow-sm', active);
+                b.classList.toggle('text-secondary', !active);
+            });
+        }
+
+        function toggleAccordion(index) {
+            const details = document.getElementById(`details-${index}`);
+            const icon = document.getElementById(`icon-${index}`);
+            if (details.classList.contains('hidden')) {
+                details.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                details.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+</body>
+</html>
