@@ -1,15 +1,37 @@
+// name=app.js
 const STORAGE_KEY = 'n5_mastery_streak_progress';
 
 function getCombinedDataset() {
     // Tag items and ensure a 'japanese' property exists for consistent tracking keys
     const vocab = typeof vocabData !== 'undefined' ? 
-        vocabData.map(item => ({ ...item, type: 'vocab', japanese: item.japanese || item.word })) : [];
+        vocabData.map(item => ({ 
+            ...item, 
+            type: 'vocab', 
+            japanese: item.japanese || item.kanji || item.word,
+            meaningEnglish: item.meaningEnglish || item.translationEnglish || item.meaning,
+            meaningBangla: item.meaningBangla || item.translationBangla,
+            romaji: item.romaji || item.correctAnswerRomaji
+        })) : [];
         
     const kanji = typeof kanjiData !== 'undefined' ? 
-        kanjiData.map(item => ({ ...item, type: 'kanji', japanese: item.japanese || item.kanji })) : [];
+        kanjiData.map(item => ({ 
+            ...item, 
+            type: 'kanji', 
+            japanese: item.japanese || item.kanji,
+            meaningEnglish: item.meaningEnglish || item.translationEnglish || item.meaning,
+            meaningBangla: item.meaningBangla || item.translationBangla,
+            romaji: item.romaji || item.correctAnswerRomaji
+        })) : [];
 
     const verbs = typeof dictData !== 'undefined' ? 
-        dictData.map(item => ({ ...item, type: 'verb', japanese: item.japanese })) : [];
+        dictData.map(item => ({ 
+            ...item, 
+            type: 'verb', 
+            japanese: item.japanese || item.kanji,
+            meaningEnglish: item.meaningEnglish || item.translationEnglish || item.meaning,
+            meaningBangla: item.meaningBangla || item.translationBangla,
+            romaji: item.romaji || item.correctAnswerRomaji
+        })) : [];
         
     return [...vocab, ...kanji, ...verbs];
 }
@@ -121,6 +143,37 @@ function getLessonStats() {
         if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
         return String(a.id).localeCompare(String(b.id));
     });
+}
+
+function getChapterStats() {
+    const ORDER = ['vocab', 'kanji', 'verb'];
+    const cats = {}, lessons = {};
+    let mastered = 0, learning = 0, total = 0;
+
+    ORDER.forEach(type => { cats[type] = { total: 0, mastered: 0, learning: 0 }; });
+
+    getCombinedDataset().forEach(item => {
+        const type = ORDER.includes(item.type) ? item.type : 'vocab';
+        const status = getWordStatus(item.japanese);
+        const id = item.lesson ?? item.lessonId ?? '1';
+        const key = type + '_' + id;
+        const L = lessons[key] || (lessons[key] = {
+            id, type, name: item.lessonName || '', total: 0, mastered: 0, learning: 0
+        });
+        const c = cats[type];
+
+        c.total++; L.total++; total++;
+        if (status === 'Mastered') { c.mastered++; L.mastered++; mastered++; }
+        else if (status === 'Learning' || status === 'Troublesome') { c.learning++; L.learning++; learning++; }
+    });
+
+    const num = x => parseInt(x);
+    const list = Object.values(lessons).sort((a, b) =>
+        a.type !== b.type ? ORDER.indexOf(a.type) - ORDER.indexOf(b.type)
+        : (!isNaN(num(a.id)) && !isNaN(num(b.id))) ? num(a.id) - num(b.id)
+        : String(a.id).localeCompare(String(b.id)));
+
+    return { cats, lessons: list, totals: { total, mastered, learning } };
 }
 
 function getTroublesomeWords() {

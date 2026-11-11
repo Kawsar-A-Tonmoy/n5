@@ -21,46 +21,60 @@
     </script>
     <style>
         .academic-flashcard {
-            background: #ffffff;
-            border: 1px solid #E5E7EB;
-            border-radius: 12px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff; border: 1px solid #E5E7EB; border-radius: 16px; padding: 24px;
+            display: flex; flex-direction: column; position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: border-color 0.2s; cursor: pointer;
         }
-        .academic-flashcard:hover {
-            border-color: #b61722;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(182, 23, 34, 0.08);
-            cursor: pointer;
-        }
+        .academic-flashcard:hover { border-color: #cbd5e1; }
+        .academic-flashcard:focus-visible { outline: 2px solid #b61722; outline-offset: 2px; }
         ruby { ruby-position: over; }
         rt { font-family: 'Inter', sans-serif; }
     </style>
+<style>.ico{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}</style>
 </head>
 <body class="bg-background text-on-surface font-sans pb-24 md:pb-8">
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></symbol>
+<symbol id="i-quiz" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.25c-.75.4-1.1.9-1.1 1.75"/><path d="M12 17h.01"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10.5 5.3 8.5 4.5 6 4.5H3v13h3c2.5 0 4.5.8 6 2 1.5-1.2 3.5-2 6-2h3v-13h-3c-2.5 0-4.5.8-6 2z"/><path d="M12 6.5v13"/></symbol>
+<symbol id="i-kanji" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M12 3.5v17M3.5 12h17"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2.5 4.5 13.5H11L10 21.5l8.5-11H12.5z"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4 2.6 17.5a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 17h.01"/></symbol>
+<symbol id="i-alert-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5M12 16h.01"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 4.5-9 4.5-9-4.5z"/><path d="m3 12 9 4.5 9-4.5"/><path d="m3 16.5 9 4.5 9-4.5"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-3.6 3.6-6 8-6s8 2.4 8 6"/></symbol>
+<symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.3 2.4 2.4 4.6-4.9"/></symbol>
+<symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.6-4.6"/></symbol>
+<symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5l4.5 4v-13l-4.5 4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5v1.5A3 3 0 0 0 8 10.5M16 6h3v1.5a3 3 0 0 1-3 3M12 13v4M9 20h6M10 17h4"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+</svg>
 
-    <header class="bg-white border-b border-border-stable sticky top-0 z-50">
+
+    <header class="bg-white border-b border-border-stable sticky top-0 z-40 h-16">
         <div class="flex justify-between items-center w-full px-4 md:px-8 max-w-[1024px] mx-auto h-16">
-            <div class="text-xl font-bold text-primary flex items-center gap-2"><div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-2xl flex items-center justify-center text-white text-3xl font-bold">日</div>N5 Mastery</div>
-            <nav class="hidden md:flex items-center space-x-6 h-full">
-                <a class="text-secondary hover:text-primary h-full flex items-center px-2" href="index.html">Dashboard</a>
-                <a class="text-secondary hover:text-primary h-full flex items-center px-2" href="quiz.html">Quiz</a>
-                <a class="text-primary font-bold border-b-2 border-primary h-full flex items-center px-2" href="library.html">Library</a>
-            </nav>
+            <div class="flex items-center gap-2 text-xl font-bold text-primary">
+                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black">日</div>
+                <span>Nihongo Nichi</span>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6 h-full text-sm"><a class="text-secondary font-medium hover:text-primary h-full flex items-center px-2" href="index.html">Dashboard</a><a class="text-secondary font-medium hover:text-primary h-full flex items-center px-2" href="quiz.html">Quiz</a><a class="text-primary font-bold border-b-2 border-primary h-full flex items-center px-2" href="library.html">Library</a></nav>
         </div>
     </header>
 
-    <main class="max-w-[1024px] mx-auto px-4 md:px-8 py-8 space-y-6">
+    <main class="max-w-[1024px] mx-auto px-4 md:px-8 py-6 space-y-6">
+        <section class="bg-gradient-to-r from-red-900 to-primary rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div class="relative z-10 space-y-1"><h1 class="text-2xl font-extrabold tracking-tight">Library</h1><p class="text-red-100 text-sm max-w-xl">Browse every card, tap to hear it, and see where each word stands.</p></div>
+            <div class="absolute -right-6 -bottom-8 opacity-[0.15] text-8xl font-black select-none pointer-events-none">日本語</div>
+        </section>
         
-        <section class="bg-white border border-border-stable p-4 rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <section class="bg-white border border-border-stable p-4 rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <div class="md:col-span-2">
                 <label class="block text-xs font-bold text-secondary mb-1.5 uppercase tracking-wider">Search Database Records</label>
                 <div class="relative">
-                    <svg class="inline-block w-[1em] h-[1em] align-middle absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" viewBox="0 -960 960 960" fill="currentColor"><path d="M792-120.67 532.67-380q-30 25.33-69.67 39.67Q423.33-326 378.67-326q-108.34 0-183.5-75.17Q120-476.33 120-583.33t75.17-182.17q75.16-75.17 182.83-75.17 107 0 181.83 75.17 74.84 75.17 74.84 182.17 0 43.33-14 83-14 39.66-40.67 73l260 258.66-48 48Zm-414-272q79 0 134.5-55.83T568-583.33q0-79-55.5-134.84Q457-774 378-774q-79.67 0-135.5 55.83-55.83 55.84-55.83 134.84T242.5-448.5q55.83 55.83 135.5 55.83Z"/></svg>
+                    <svg class="ico w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true"><use href="#i-search"/></svg>
                     <input id="filter-search-string" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-border-stable rounded-lg focus:border-primary focus:ring-0 outline-none text-sm" placeholder="Search Romaji, English, Bangla..." type="text">
                 </div>
             </div>
@@ -80,29 +94,12 @@
             </div>
         </section>
 
-        <div class="flex flex-wrap gap-4 text-xs font-bold text-secondary tracking-wide uppercase px-1">
-            <div>Cards Found: <span id="ui-filtered-total" class="text-primary">0</span></div>
-            <div>•</div>
-            <div>Mastered: <span id="ui-mastered-total" class="text-teal-700">0</span></div>
-        </div>
+        <div class="flex flex-wrap gap-3 text-xs font-semibold text-slate-500"><div class="bg-white border border-border-stable rounded-lg px-3 py-1.5">Cards found <span id="ui-filtered-total" class="text-primary font-bold">0</span></div><div class="bg-white border border-border-stable rounded-lg px-3 py-1.5">Mastered <span id="ui-mastered-total" class="text-emerald-600 font-bold">0</span></div><div class="bg-white border border-border-stable rounded-lg px-3 py-1.5">Learning <span id="ui-learning-total" class="text-blue-600 font-bold">0</span></div></div>
 
         <div id="deck-grid-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </main>
 
-    <nav class="fixed bottom-0 w-full z-50 flex justify-around items-center bg-white border-t border-border-stable py-2 md:hidden">
-        <a class="flex flex-col items-center text-secondary" href="index.html">
-            <svg class="inline-block w-[1em] h-[1em] align-middle text-2xl" viewBox="0 -960 960 960" fill="currentColor"><path d="M226.67-186.67h140v-246.66h226.66v246.66h140v-380L480-756.67l-253.33 190v380ZM160-120v-480l320-240 320 240v480H526.67v-246.67h-93.34V-120H160Zm320-352Z"/></svg>
-            <span class="text-[10px] font-bold">Home</span>
-        </a>
-        <a class="flex flex-col items-center text-secondary" href="quiz.html">
-            <svg class="inline-block w-[1em] h-[1em] align-middle text-2xl" viewBox="0 -960 960 960" fill="currentColor"><path d="M577.83-358.83Q590-371 590-388t-12.17-29.17q-12.16-12.16-29.16-12.16t-29.17 12.16Q507.33-405 507.33-388t12.17 29.17q12.17 12.16 29.17 12.16t29.16-12.16ZM522-473.33h51.33q1.34-29 7.67-42.84Q587.33-530 612-554q28-27.33 38.33-46.43 10.34-19.1 10.34-44.9 0-45.59-31.5-74.46-31.5-28.88-82.5-28.88-39 0-69.17 21.34Q447.33-706 434-668.67l48 20q10.33-25 26.5-37.83 16.17-12.83 38.17-12.83 27.85 0 45.26 15.83 17.4 15.83 17.4 40.83 0 18-8.66 32.17Q592-596.33 570-578.67q-32.33 29-40.17 46.17-7.83 17.17-7.83 59.17Zm-242 260q-27 0-46.83-19.84Q213.33-253 213.33-280v-533.33q0-27 19.84-46.84Q253-880 280-880h533.33q27 0 46.84 19.83Q880-840.33 880-813.33V-280q0 27-19.83 46.83-19.84 19.84-46.84 19.84H280Zm0-66.67h533.33v-533.33H280V-280ZM146.67-80q-27 0-46.84-19.83Q80-119.67 80-146.67v-600h66.67v600h600V-80h-600ZM280-813.33V-280v-533.33Z"/></svg>
-            <span class="text-[10px] font-bold">Quiz</span>
-        </a>
-        <a class="flex flex-col items-center text-primary" href="library.html">
-            <svg class="inline-block w-[1em] h-[1em] align-middle text-2xl" viewBox="0 -960 960 960" fill="green"><path d="M480-60q-76-68.67-168.67-105.33Q218.67-202 120-202v-432.67q96.33 0 189 40.84Q401.67-553 480-478.67 558.33-553 651-593.83q92.67-40.84 189-40.84V-202q-99 0-191.5 36.67Q556-128.67 480-60Zm0-86q68.33-49.67 142.33-79.33 74-29.67 151-38V-562q-69.66 11.67-143.5 53.83Q556-466 480-392.67q-80.67-76-152.17-117.16Q256.33-551 186.67-562v298.67q77 8.33 151 38 74 29.66 142.33 79.33ZM371.33-653.33Q326-698.67 326-764t45.33-110.67Q416.67-920 482-920t110.67 45.33Q638-829.33 638-764t-45.33 110.67Q547.33-608 482-608t-110.67-45.33Zm173.84-47.5Q571.33-727 571.33-764t-26.16-63.17Q519-853.33 482-853.33t-63.17 26.16Q392.67-801 392.67-764t26.16 63.17Q445-674.67 482-674.67t63.17-26.16ZM482-764Zm-2 371.33Z"/></svg> 
-            <span class="text-[10px] font-bold">Library</span>
-        </a>
-    </nav>
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-border-stable py-2 px-6 flex justify-around items-center z-40 md:hidden"><a href="index.html" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 font-medium"><svg class="ico w-5 h-5" aria-hidden="true"><use href="#i-home"/></svg><span class="text-[10px]">Home</span></a><a href="quiz.html" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 font-medium"><svg class="ico w-5 h-5" aria-hidden="true"><use href="#i-quiz"/></svg><span class="text-[10px]">Quiz</span></a><a href="library.html" class="flex flex-col items-center gap-1 text-primary font-bold"><svg class="ico w-5 h-5" aria-hidden="true"><use href="#i-book"/></svg><span class="text-[10px]">Library</span></a></nav>
 
     <script src="data-vocab.js"></script>
     <script src="data-kanji.js"></script>
@@ -167,13 +164,13 @@
 
         function createStatusBadgeMarkup(status) {
             if (status === 'Mastered') {
-                return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-teal-50 text-teal-700 border border-teal-200 rounded">Mastered</span>`;
+                return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-teal-50 text-teal-700 border border-teal-200 rounded-full">Mastered</span>`;
             } else if (status === 'Troublesome') {
-                return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-red-50 text-red-700 border border-red-200 rounded">Troublesome</span>`;
+                return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-red-50 text-red-700 border border-red-200 rounded-full">Troublesome</span>`;
             } else if (status === 'Learning') {
-                return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 rounded">Learning</span>`;
+                return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 rounded-full">Learning</span>`;
             } else {
-                return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-500 border border-gray-200 rounded">Unseen</span>`;
+                return `<span class="flex items-center gap-0.5 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-500 border border-gray-200 rounded-full">Unseen</span>`;
             }
         }
 
@@ -202,14 +199,17 @@
 
             document.getElementById('ui-filtered-total').textContent = matches.length;
             
-            let totalMasteredCount = 0;
+            let totalMasteredCount = 0, totalLearningCount = 0;
             matches.forEach(item => {
                 const currentStatus = getWordStatus(item.japanese);
                 if (currentStatus === 'Mastered') totalMasteredCount++;
+                if (currentStatus === 'Learning' || currentStatus === 'Troublesome') totalLearningCount++;
 
                 const cardElement = document.createElement('div');
                 cardElement.className = "academic-flashcard group";
                 cardElement.onclick = () => speakJapanese(item.japanese);
+                cardElement.tabIndex = 0; cardElement.setAttribute('role', 'button');
+                cardElement.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); speakJapanese(item.japanese); } };
                 
                 let jpContentBlock = "";
                 if (item.kanji && item.kanji !== "") {
@@ -255,7 +255,7 @@
                     <div class="mt-auto pt-3 border-t border-gray-100 flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                         <span>Ch. ${item.lesson}</span>
                         <span class="text-primary flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                            Listen <svg class="inline-block w-[1em] h-[1em] align-middle text-[14px]" viewBox="0 -960 960 960" fill="currentColor"><path d="M382-306.67 653.33-480 382-653.33v346.66ZM480-80q-82.33 0-155.33-31.5-73-31.5-127.34-85.83Q143-251.67 111.5-324.67T80-480q0-83 31.5-156t85.83-127q54.34-54 127.34-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82.33-31.5 155.33-31.5 73-85.5 127.34Q709-143 636-111.5T480-80Zm0-66.67q139.33 0 236.33-97.33t97-236q0-139.33-97-236.33t-236.33-97q-138.67 0-236 97-97.33 97-97.33 236.33 0 138.67 97.33 236 97.33 97.33 236 97.33ZM480-480Z"/></svg>
+                            Listen <svg class="ico w-3.5 h-3.5" aria-hidden="true"><use href="#i-volume"/></svg>
                         </span>
                     </div>
                 `;
@@ -263,6 +263,7 @@
             });
 
             document.getElementById('ui-mastered-total').textContent = totalMasteredCount;
+            document.getElementById('ui-learning-total').textContent = totalLearningCount;
         }
     </script>
 </body>

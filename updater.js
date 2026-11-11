@@ -1,24 +1,21 @@
 (function () {
     // --- CONFIGURATION ---
     const CONFIG = {
-        repo: 'Kawsar-A-Tonmoy/n5',  // Your GitHub repository[cite: 2]
-        currentVersion: 'v0.2c'       // Your current installed app version[cite: 2]
+        repo: 'Kawsar-A-Tonmoy/n5',  // Your GitHub repository
+        currentVersion: 'v0.3b'       // Your current installed app version
     };
 
-    // Helper to compare version tags (handles formats like v0.1X, v0.2a, v1.0.0, etc.)[cite: 2]
+    // Helper to compare version tags
     function isNewerVersion(current, latest) {
-        // Strip leading 'v' or 'v ' if present[cite: 2]
         const cleanCurrent = current.replace(/^v\s*/i, '').trim();
         const cleanLatest = latest.replace(/^v\s*/i, '').trim();
 
-        // If exact match, not newer[cite: 2]
         if (cleanCurrent === cleanLatest) return false;
 
-        // Compare using standard locale-aware string comparison for alphanumeric tags[cite: 2]
         return cleanLatest.localeCompare(cleanCurrent, undefined, { numeric: true, sensitivity: 'base' }) > 0;
     }
 
-    // Function to inject and display the modern update popup modal[cite: 2]
+    // Function to inject and display the modern update popup modal
     function showUpdateModal(release) {
         if (document.getElementById('gh-update-modal')) return;
 
@@ -40,12 +37,12 @@
                         A new version of <strong>n5</strong> is available for download!
                     </p>
                     
-                    <!-- Changelog Box (HTML rendering enabled) -->
-                    <div style="
+                    <!-- HTML-enabled Changelog Box -->
+                    <div id="gh-changelog-content" style="
                         background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 8px;
-                        padding: 12px; font-size: 0.85rem; overflow-y: auto; flex-grow: 1;
-                        white-space: pre-wrap; word-break: break-word; margin-bottom: 20px;
-                        max-height: 220px; font-family: monospace; color: #24292f;
+                        padding: 12px 16px; font-size: 0.875rem; overflow-y: auto; flex-grow: 1;
+                        word-break: break-word; margin-bottom: 20px; max-height: 220px;
+                        color: #24292f; line-height: 1.5;
                     ">${release.body ? release.body : 'No release notes provided.'}</div>
 
                     <!-- Action Buttons -->
@@ -72,20 +69,14 @@
         });
     }
 
-    // Basic HTML sanitizer for security[cite: 2]
-    function escapeHtml(str) {
-        return str.replace(/[&<>'"]/g, 
-            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-        );
-    }
-
-    // Fetch update from GitHub Releases API[cite: 2]
+    // Fetch update from GitHub Releases API
     async function checkForUpdates() {
-        if (!navigator.onLine) return; // Ignore if offline[cite: 2]
+        if (!navigator.onLine) return; // Ignore if offline
 
         try {
             const response = await fetch(`https://api.github.com/repos/${CONFIG.repo}/releases/latest`, {
-                headers: { 'Accept': 'application/vnd.github.v3+json' }
+                headers: { 'Accept': 'application/vnd.github.v3+json' },
+                cache: 'no-store'
             });
 
             if (!response.ok) return;
@@ -93,7 +84,7 @@
             const releaseData = await response.json();
             const latestVersion = releaseData.tag_name;
 
-            // Trigger modal if latest tag is newer (e.g. v0.2a > v0.1X)[cite: 2]
+            // Trigger modal if latest tag is newer
             if (isNewerVersion(CONFIG.currentVersion, latestVersion)) {
                 showUpdateModal(releaseData);
             }
@@ -102,7 +93,7 @@
         }
     }
 
-    // Auto-run when DOM is fully loaded[cite: 2]
+    // Auto-run when DOM is fully loaded
     if (document.readyState === 'complete') {
         checkForUpdates();
     } else {

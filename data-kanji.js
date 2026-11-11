@@ -1,4 +1,4 @@
-const kanjiData =[
+const kanjiData = [
   {
     "lesson": 1,
     "lessonName": "Lesson 1: Kanji Introduction",
@@ -1425,5 +1425,389 @@ const kanjiData =[
       { "japanese": "電気", "romaji": "denki", "meaningBangla": "বিদ্যুৎ", "meaningEnglish": "Electricity" },
       { "japanese": "電池", "romaji": "denchi", "meaningBangla": "ব্যাটারি", "meaningEnglish": "Battery" }
     ]
+  },
+  {
+    "lesson": 12,
+    "lessonName": "N4 Lesson 1: Places & Administrative Units",
+    "japanese": "住",
+    "romaji": "Juu / Su",
+    "meaningBangla": "বসবাস করা / থাকা",
+    "meaningEnglish": "To reside / Live",
+    "examples": [
+      { "japanese": "住む", "romaji": "sumu", "meaningBangla": "বসবাস করা", "meaningEnglish": "To live / To reside" },
+      { "japanese": "住民", "romaji": "juumin", "meaningBangla": "বাসিন্দা / অধিবাসী", "meaningEnglish": "Resident / Inhabitant" },
+      { "japanese": "住所", "romaji": "juusho", "meaningBangla": "ঠিকানা", "meaningEnglish": "Address" }
+    ]
+  },
+  {
+    "lesson": 12,
+    "lessonName": "N4 Lesson 1: Places & Administrative Units",
+    "japanese": "所",
+    "romaji": "Sho / Tokoro",
+    "meaningBangla": "স্থান / জায়গা",
+    "meaningEnglish": "Place / Location",
+    "examples": [
+      { "japanese": "場所", "romaji": "basho", "meaningBangla": "জায়গা / স্থান", "meaningEnglish": "Place / Location" },
+      { "japanese": "所", "romaji": "tokoro", "meaningBangla": "স্থান", "meaningEnglish": "Place" },
+      { "japanese": "住所", "romaji": "juusho", "meaningBangla": "ঠিকানা", "meaningEnglish": "Address" }
+    ]
+  },
+  {
+    "lesson": 12,
+    "lessonName": "N4 Lesson 1: Places & Administrative Units",
+    "japanese": "京",
+    "romaji": "Kyou / Miyako",
+    "meaningBangla": "রাজধানী",
+    "meaningEnglish": "Capital",
+    "examples": [
+      { "japanese": "東京", "romaji": "toukyou", "meaningBangla": "টোকিও", "meaningEnglish": "Tokyo" },
+      { "japanese": "京都市", "romaji": "kyoutoshi", "meaningBangla": "কিয়োটো শহর", "meaningEnglish": "Kyoto City" }
+    ]
+  },
+  {
+    "lesson": 12,
+    "lessonName": "N4 Lesson 1: Places & Administrative Units",
+    "japanese": "都",
+    "romaji": "To / Miyako",
+    "meaningBangla": "মহানগর / রাজধানী",
+    "meaningEnglish": "Metropolis / Capital",
+    "examples": [
+      { "japanese": "東京都", "romaji": "toukyouto", "meaningBangla": "টোকিও মেট্রোপলিটন এলাকা", "meaningEnglish": "Tokyo Metropolis" },
+      { "japanese": "都合がいい", "romaji": "tsugougaii", "meaningBangla": "সুবিধাজনক", "meaningEnglish": "Convenient" }
+    ]
+  },
+  {
+    "lesson": 12,
+    "lessonName": "N4 Lesson 1: Places & Administrative Units",
+    "japanese": "府",
+    "romaji": "Fu",
+    "meaningBangla": "প্রশাসনিক প্রিফেকচার",
+    "meaningEnglish": "Urban Prefecture / Government office",
+    "examples": [
+      { "japanese": "京都府", "romaji": "kyoutofu", "meaningBangla": "কিয়োটো প্রিফেকচার", "meaningEnglish": "Kyoto Prefecture" },
+      { "japanese": "大阪府", "romaji": "oosakafu", "meaningBangla": "ওসাকা প্রিফেকচার", "meaningEnglish": "Osaka Prefecture" },
+      { "japanese": "政府", "romaji": "seifu", "meaningBangla": "সরকার", "meaningEnglish": "Government" }
+    ]
+  },
+  {
+    "lesson": 12,
+    "lessonName": "N4 Lesson 1: Places & Administrative Units",
+    "japanese": "県",
+    "romaji": "Ken",
+    "meaningBangla": "প্রিফেকচার / জেলা",
+    "meaningEnglish": "Prefecture",
+    "examples": [
+      { "japanese": "山口県", "romaji": "yamaguchiken", "meaningBangla": "ইয়ামাগুচি প্রিফেকচার", "meaningEnglish": "Yamaguchi Prefecture" },
+      { "japanese": "県知事", "romaji": "kenchiji", "meaningBangla": "প্রিফেকচারের গভর্নর", "meaningEnglish": "Prefectural governor" }
+    ]
+  },
+  {
+    "lesson": 12,
+    "lessonName": "N4 Lesson 1: Places & Administrative Units",
+    "japanese": "市",
+    "romaji": "Shi / Ichi",
+    "meaningBangla": "শহর / বাজার",
+    "meaningEnglish": "City / Market",
+    "examples": [
+      { "japanese": "京都市", "romaji": "kyoutoshi", "meaningBangla": "কিয়োটো শহর", "meaningEnglish": "Kyoto City" },
+      { "japanese": "市長", "romaji": "shichou", "meaningBangla": "মেয়র", "meaningEnglish": "Mayor" },
+      { "japanese": "市場", "romaji": "ichiba", "meaningBangla": "মার্কেট / বাজার", "meaningEnglish": "Market" }
+    ]
+  },
+  {
+    "lesson": 12,
+    "lessonName": "N4 Lesson 1: Places & Administrative Units",
+    "japanese": "区",
+    "romaji": "Ku",
+    "meaningBangla": "ওয়ার্ড / এলাকা",
+    "meaningEnglish": "Ward / District",
+    "examples": [
+      { "japanese": "北区", "romaji": "kitaku", "meaningBangla": "কিতা ওয়ার্ড", "meaningEnglish": "Kita Ward" },
+      { "japanese": "文京区", "romaji": "bunkyouku", "meaningBangla": "বুঙ্কিও ওয়ার্ড", "meaningEnglish": "Bunkyo Ward" },
+      { "japanese": "区長", "romaji": "kuchou", "meaningBangla": "ওয়ার্ড মেয়র / প্রধান", "meaningEnglish": "Ward mayor / Head of ward" }
+    ]
+  },
+  {
+    "lesson": 12,
+    "lessonName": "N4 Lesson 1: Places & Administrative Units",
+    "japanese": "町",
+    "romaji": "Machi / Chou",
+    "meaningBangla": "শহর / টাউন",
+    "meaningEnglish": "Town",
+    "examples": [
+      { "japanese": "町", "romaji": "machi", "meaningBangla": "শহর", "meaningEnglish": "Town" },
+      { "japanese": "下町", "romaji": "shitamachi", "meaningBangla": "শহরের কেন্দ্রস্থল / ডাউনটাউন", "meaningEnglish": "Downtown / Old town" },
+      { "japanese": "町長", "romaji": "chouchou", "meaningBangla": "শহরের নেতা / মেয়র", "meaningEnglish": "Town mayor" }
+    ]
+  },
+  {
+    "lesson": 12,
+    "lessonName": "N4 Lesson 1: Places & Administrative Units",
+    "japanese": "村",
+    "romaji": "Mura / Son",
+    "meaningBangla": "গ্রাম",
+    "meaningEnglish": "Village",
+    "examples": [
+      { "japanese": "村", "romaji": "mura", "meaningBangla": "গ্রাম", "meaningEnglish": "Village" },
+      { "japanese": "村人", "romaji": "murabito", "meaningBangla": "গ্রামবাসী", "meaningEnglish": "Villager" },
+      { "japanese": "村長", "romaji": "sonchou", "meaningBangla": "গ্রামের প্রধান / চেয়ারম্যান", "meaningEnglish": "Village headman / Mayor" }
+    ]
+  },
+  {
+    "lesson": 13,
+    "lessonName": "Lesson 13: Adjectives & Opposites",
+    "japanese": "明",
+    "romaji": "Aka",
+    "meaningBangla": "উজ্জ্বল",
+    "meaningEnglish": "Bright",
+    "examples": [
+      { "japanese": "明るい", "romaji": "akarui", "meaningBangla": "উজ্জ্বল", "meaningEnglish": "Bright" },
+      { "japanese": "はっきり", "romaji": "hakkiri", "meaningBangla": "স্পষ্টভাবে", "meaningEnglish": "Clearly" },
+      { "japanese": "明日", "romaji": "ashita / asu", "meaningBangla": "আগামীকাল", "meaningEnglish": "Tomorrow" }
+    ]
+  },
+  {
+    "lesson": 13,
+    "lessonName": "Lesson 13: Adjectives & Opposites",
+    "japanese": "暗",
+    "romaji": "Kura",
+    "meaningBangla": "অন্ধকার",
+    "meaningEnglish": "Dark",
+    "examples": [
+      { "japanese": "暗い", "romaji": "kurai", "meaningBangla": "অন্ধকার", "meaningEnglish": "Dark" },
+      { "japanese": "暗号", "romaji": "angou", "meaningBangla": "সংকেত / গোপন কোড", "meaningEnglish": "Code / Secret key" }
+    ]
+  },
+  {
+    "lesson": 13,
+    "lessonName": "Lesson 13: Adjectives & Opposites",
+    "japanese": "遠",
+    "romaji": "Too",
+    "meaningBangla": "দূর / দূরবর্তী",
+    "meaningEnglish": "Far / Distant",
+    "examples": [
+      { "japanese": "遠い", "romaji": "tooi", "meaningBangla": "দূর", "meaningEnglish": "Far" },
+      { "japanese": "遠足", "romaji": "ensoku", "meaningBangla": "ভ্রমণ / পিকনিক", "meaningEnglish": "Excursion / Trip" }
+    ]
+  },
+  {
+    "lesson": 13,
+    "lessonName": "Lesson 13: Adjectives & Opposites",
+    "japanese": "近",
+    "romaji": "Chika",
+    "meaningBangla": "কাছাকাছি / নিকটবর্তী",
+    "meaningEnglish": "Near / Close",
+    "examples": [
+      { "japanese": "近い", "romaji": "chikai", "meaningBangla": "কাছাকাছি", "meaningEnglish": "Near" },
+      { "japanese": "近所", "romaji": "kinjo", "meaningBangla": "প্রতিবেশী / আশেপাশের এলাকা", "meaningEnglish": "Neighborhood" },
+      { "japanese": "最近", "romaji": "saikin", "meaningBangla": "সাম্প্রতিক", "meaningEnglish": "Recently" }
+    ]
+  },
+  {
+    "lesson": 13,
+    "lessonName": "Lesson 13: Adjectives & Opposites",
+    "japanese": "強",
+    "romaji": "Tsuyo / Kyou",
+    "meaningBangla": "শক্তিশালী / দৃঢ়",
+    "meaningEnglish": "Strong",
+    "examples": [
+      { "japanese": "強い", "romaji": "tsuyoi", "meaningBangla": "শক্তিশালী", "meaningEnglish": "Strong" },
+      { "japanese": "強風", "romaji": "kyoufuu", "meaningBangla": "প্রবল বাতাস", "meaningEnglish": "Strong wind" },
+      { "japanese": "強弱", "romaji": "kyoujaku", "meaningBangla": "সবল ও দুর্বল", "meaningEnglish": "Strength and weakness" }
+    ]
+  },
+  {
+    "lesson": 13,
+    "lessonName": "Lesson 13: Adjectives & Opposites",
+    "japanese": "弱",
+    "romaji": "Yowa",
+    "meaningBangla": "দুর্বল",
+    "meaningEnglish": "Weak",
+    "examples": [
+      { "japanese": "弱い", "romaji": "yowai", "meaningBangla": "দুর্বল", "meaningEnglish": "Weak" }
+    ]
+  },
+  {
+    "lesson": 13,
+    "lessonName": "Lesson 13: Adjectives & Opposites",
+    "japanese": "重",
+    "romaji": "Omo / Juu",
+    "meaningBangla": "ভারী / গুরুত্বপূর্ণ",
+    "meaningEnglish": "Heavy / Important",
+    "examples": [
+      { "japanese": "重い", "romaji": "omoi", "meaningBangla": "ভারী", "meaningEnglish": "Heavy" },
+      { "japanese": "重大な", "romaji": "juudaina", "meaningBangla": "গুরুত্বপূর্ণ", "meaningEnglish": "Serious / Important" }
+    ]
+  },
+  {
+    "lesson": 13,
+    "lessonName": "Lesson 13: Adjectives & Opposites",
+    "japanese": "軽",
+    "romaji": "Karu / Kei",
+    "meaningBangla": "হালকা",
+    "meaningEnglish": "Light",
+    "examples": [
+      { "japanese": "軽い", "romaji": "karui", "meaningBangla": "হালকা", "meaningEnglish": "Light" },
+      { "japanese": "軽食", "romaji": "keishoku", "meaningBangla": "হালকা খাবার / জলখাবার", "meaningEnglish": "Light meal / Snack" }
+    ]
+  },
+  {
+    "lesson": 13,
+    "lessonName": "Lesson 13: Adjectives & Opposites",
+    "japanese": "太",
+    "romaji": "Futo / Tai",
+    "meaningBangla": "মোটা / স্থূল",
+    "meaningEnglish": "Thick / Fat",
+    "examples": [
+      { "japanese": "太い", "romaji": "futoi", "meaningBangla": "মোটা", "meaningEnglish": "Thick / Fat" },
+      { "japanese": "太陽", "romaji": "taiyou", "meaningBangla": "সূর্য", "meaningEnglish": "Sun" }
+    ]
+  },
+  {
+    "lesson": 13,
+    "lessonName": "Lesson 13: Adjectives & Opposites",
+    "japanese": "細",
+    "romaji": "Hoso / Koma",
+    "meaningBangla": "সরু / সূক্ষ্ম",
+    "meaningEnglish": "Thin / Fine",
+    "examples": [
+      { "japanese": "細い", "romaji": "hosoi", "meaningBangla": "সরু / চিকন", "meaningEnglish": "Thin / Slender" },
+      { "japanese": "細かい", "romaji": "komakai", "meaningBangla": "সূক্ষ্ম / ছোট", "meaningEnglish": "Detailed / Fine" },
+      { "japanese": "細工", "romaji": "saiku", "meaningBangla": "কারুকাজ", "meaningEnglish": "Craftwork" }
+    ]
+  },
+  {
+    "lesson": 14,
+    "lessonName": "Lesson 14: Special & Separation",
+    "japanese": "特",
+    "romaji": "Toku",
+    "meaningBangla": "বিশেষ",
+    "meaningEnglish": "Special",
+    "examples": [
+      { "japanese": "特別な", "romaji": "tokubetsuna", "meaningBangla": "বিশেষ", "meaningEnglish": "Special" },
+      { "japanese": "特に", "romaji": "tokuni", "meaningBangla": "বিশেষ করে", "meaningEnglish": "Especially" },
+      { "japanese": "特急", "romaji": "tokkyuu", "meaningBangla": "দ্রুতগামী এক্সপ্রেস", "meaningEnglish": "Limited express" }
+    ]
+  },
+  {
+    "lesson": 14,
+    "lessonName": "Lesson 14: Special & Separation",
+    "japanese": "別",
+    "romaji": "Betsu / Wakara",
+    "meaningBangla": "আলাদা / পৃথক",
+    "meaningEnglish": "Separate / Different",
+    "examples": [
+      { "japanese": "別れる", "romaji": "wakareru", "meaningBangla": "আলাদা হওয়া", "meaningEnglish": "To separate" },
+      { "japanese": "別々に", "romaji": "betsubetsuni", "meaningBangla": "আলাদা আলাদাভাবে", "meaningEnglish": "Separately" },
+      { "japanese": "区別する", "romaji": "kubetsusuru", "meaningBangla": "শ্রেণিবিভাগ করা", "meaningEnglish": "To distinguish" },
+      { "japanese": "分別する", "romaji": "bunbetsusuru", "meaningBangla": "শ্রেণিবিভাগ করা", "meaningEnglish": "To sort / Separate" }
+    ]
+  },
+  {
+    "lesson": 14,
+    "lessonName": "Lesson 14: Special & Separation",
+    "japanese": "有",
+    "romaji": "Aru / Yuu",
+    "meaningBangla": "থাকা / বিদ্যমান",
+    "meaningEnglish": "Exist / Have",
+    "examples": [
+      { "japanese": "有る", "romaji": "aru", "meaningBangla": "বিদ্যমান থাকা", "meaningEnglish": "To exist" },
+      { "japanese": "有名な", "romaji": "yuumeina", "meaningBangla": "বিখ্যাত", "meaningEnglish": "Famous" },
+      { "japanese": "有料", "romaji": "yuuryou", "meaningBangla": "মূল্য পরিশোধ করতে হয় এমন", "meaningEnglish": "Paid" }
+    ]
+  },
+  {
+    "lesson": 14,
+    "lessonName": "Lesson 14: Special & Separation",
+    "japanese": "便",
+    "romaji": "Ben / Bin",
+    "meaningBangla": "সুবিধা / চিঠি / মেল",
+    "meaningEnglish": "Convenience / Mail",
+    "examples": [
+      { "japanese": "便利な", "romaji": "benrina", "meaningBangla": "সুবিধাজনক", "meaningEnglish": "Convenient" },
+      { "japanese": "便り", "romaji": "tayori", "meaningBangla": "খবর / চিঠি", "meaningEnglish": "News / Letter" },
+      { "japanese": "郵便局", "romaji": "yuubinkyoku", "meaningBangla": "পোস্ট অফিস", "meaningEnglish": "Post office" },
+      { "japanese": "船便", "romaji": "funabin", "meaningBangla": "জলপথের মেল", "meaningEnglish": "Surface mail" }
+    ]
+  },
+  {
+    "lesson": 14,
+    "lessonName": "Lesson 14: Special & Separation",
+    "japanese": "利",
+    "romaji": "Ri",
+    "meaningBangla": "লাভ / সুবিধা",
+    "meaningEnglish": "Profit / Advantage",
+    "examples": [
+      { "japanese": "利益", "romaji": "rieki", "meaningBangla": "মুনাফা", "meaningEnglish": "Profit" },
+      { "japanese": "利用する", "romaji": "riyousuru", "meaningBangla": "ব্যবহার করা", "meaningEnglish": "To use" },
+      { "japanese": "利子", "romaji": "rishi", "meaningBangla": "সুদ", "meaningEnglish": "Interest (bank)" },
+      { "japanese": "有利な", "romaji": "yuurina", "meaningBangla": "সুবিধাজনক", "meaningEnglish": "Advantageous" }
+    ]
+  },
+  {
+    "lesson": 14,
+    "lessonName": "Lesson 14: Special & Separation",
+    "japanese": "不",
+    "romaji": "Fu",
+    "meaningBangla": "না / অভাব (Negative prefix)",
+    "meaningEnglish": "Non- / Un-",
+    "examples": [
+      { "japanese": "不便な", "romaji": "fubenna", "meaningBangla": "অসুবিধাজনক", "meaningEnglish": "Inconvenient" },
+      { "japanese": "不足する", "romaji": "fusokusuru", "meaningBangla": "কম হওয়া", "meaningEnglish": "To be insufficient" },
+      { "japanese": "不安な", "romaji": "fuanna", "meaningBangla": "উদ্বেগজনক", "meaningEnglish": "Anxious / Uneasy" },
+      { "japanese": "不運な", "romaji": "fuunna", "meaningBangla": "দুর্ভাগ্যজনক", "meaningEnglish": "Unlucky" }
+    ]
+  },
+  {
+    "lesson": 14,
+    "lessonName": "Lesson 14: Special & Separation",
+    "japanese": "切",
+    "romaji": "Kiru / Kitte",
+    "meaningBangla": "কাটা",
+    "meaningEnglish": "To cut",
+    "examples": [
+      { "japanese": "切る", "romaji": "kiru", "meaningBangla": "কাটা", "meaningEnglish": "To cut" },
+      { "japanese": "切手", "romaji": "kitte", "meaningBangla": "ডাকটিকিট", "meaningEnglish": "Postage stamp" },
+      { "japanese": "大切な", "romaji": "taisetsuna", "meaningBangla": "গুরুত্বপূর্ণ", "meaningEnglish": "Important" }
+    ]
+  },
+  {
+    "lesson": 14,
+    "lessonName": "Lesson 14: Special & Separation",
+    "japanese": "元",
+    "romaji": "Moto / Gen",
+    "meaningBangla": "মূল / উৎস / সুস্থ",
+    "meaningEnglish": "Origin / Health",
+    "examples": [
+      { "japanese": "元気な", "romaji": "genkina", "meaningBangla": "সুস্থ / কর্মক্ষম", "meaningEnglish": "Healthy / Energetic" },
+      { "japanese": "元日", "romaji": "ganzitsu", "meaningBangla": "নতুন বছরের প্রথম দিন", "meaningEnglish": "New Year's Day" },
+      { "japanese": "紀元前", "romaji": "kigenzen", "meaningBangla": "যিশু খ্রিস্টের জন্মের পূর্বে", "meaningEnglish": "B.C." }
+    ]
+  },
+  {
+    "lesson": 14,
+    "lessonName": "Lesson 14: Special & Separation",
+    "japanese": "好",
+    "romaji": "Suki / Kou",
+    "meaningBangla": "পছন্দ",
+    "meaningEnglish": "Like / Favorite",
+    "examples": [
+      { "japanese": "好きな", "romaji": "sukina", "meaningBangla": "পছন্দ", "meaningEnglish": "Favorite" },
+      { "japanese": "好意", "romaji": "koui", "meaningBangla": "সদিচ্ছা / স্নেহ", "meaningEnglish": "Goodwill / Affection" },
+      { "japanese": "好物", "romaji": "koubutsu", "meaningBangla": "প্রিয় খাবার", "meaningEnglish": "Favorite food" }
+    ]
+  },
+  {
+    "lesson": 14,
+    "lessonName": "Lesson 14: Special & Separation",
+    "japanese": "急",
+    "romaji": "Isogu / Kyuu",
+    "meaningBangla": "তাড়াহুড়ো / জরুরি",
+    "meaningEnglish": "Hurry / Emergency",
+    "examples": [
+      { "japanese": "急ぐ", "romaji": "isogu", "meaningBangla": "তাড়াহুড়ো করা", "meaningEnglish": "To hurry" },
+      { "japanese": "急に", "romaji": "kyuuni", "meaningBangla": "হঠাৎ", "meaningEnglish": "Suddenly" },
+      { "japanese": "急用", "romaji": "kyuuyou", "meaningBangla": "জরুরি কাজ", "meaningEnglish": "Urgent business" }
+    ]
   }
-]
+];
